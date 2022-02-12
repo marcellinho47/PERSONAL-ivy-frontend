@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/screens/login.dart';
 
-import 'ResponseMediaQuery.dart';
 
 void main() {
+
   runApp(const MyApp());
 }
 
@@ -15,9 +16,9 @@ class MyApp extends StatelessWidget {
       title: 'Ivy',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.grey,
       ),
-      home: const ResponseMediaQuery(),
+      home: Login(),
     );
   }
 }

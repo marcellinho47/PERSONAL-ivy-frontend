@@ -100,5 +100,39 @@
       loadMainDartJs();
     }
   </script>
+
+  <!-- ------------------------------------------------- -->
+  <!-- ------------------------------------------------- -->
+  <!-- FIREBASE CONFIG -->
+  <!-- ------------------------------------------------- -->
+  <!-- ------------------------------------------------- -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-analytics.js";
+    import { } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-auth.js";
+    import { } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
+    import { } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-storage.js";
+
+
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyAe_xRXC2Lj4BmfANvH1CxQEyYEtr_gtXk",
+      authDomain: "sys-ivy.firebaseapp.com",
+      projectId: "sys-ivy",
+      storageBucket: "sys-ivy.appspot.com",
+      messagingSenderId: "1017398036207",
+      appId: "1:1017398036207:web:db5cfde3ccb041060ffd1a",
+      measurementId: "G-733TLSDR61"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
 </body>
 </html>
