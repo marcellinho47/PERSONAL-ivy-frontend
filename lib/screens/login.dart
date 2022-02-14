@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
+import 'package:sys_ivy_frontend/utils/functions.dart';
+import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -9,6 +12,74 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  StringBuffer _toastMsg = StringBuffer("");
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    resetFields();
+  }
+
+  void resetFields() {
+    _toastMsg = StringBuffer("");
+    _emailController.text = "";
+    _passwordController.text = "";
+  }
+
+  Future<void> login(BuildContext context) async {
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
+    if (isValidForm(email, password)) {
+      await _auth
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((auth) => {
+                // TODO
+                print(auth.user?.uid),
+              })
+          .onError((error, stackTrace) => {
+                // TODO REVISAR
+                setState(() {
+                  showErrorToast(context, "Usuário ou Senha inválidos.");
+                  resetFields();
+                })
+              });
+    } else {
+      setState(() {
+        showWarningToast(context, _toastMsg.toString());
+        resetFields();
+      });
+    }
+  }
+
+  bool isValidForm(String? email, String? password) {
+    bool isValidForm = true;
+    _toastMsg = StringBuffer("");
+
+    // EMAIL
+    if (email != null && email.isEmpty) {
+      _toastMsg.write("E-mail não informado.\n");
+      isValidForm = false;
+    } else if (!UtilFunctions.isValidEmail(email!)) {
+      _toastMsg.write("E-mail inválido.\n");
+      isValidForm = false;
+    }
+
+    // PASSWORD
+    if (password == null || password.isEmpty) {
+      _toastMsg.write("\nSenha não informada.");
+      isValidForm = false;
+    } else if (password.length < 8) {
+      _toastMsg.write("\nSenha inválida.");
+      isValidForm = false;
+    }
+
+    return isValidForm;
+  }
+
   double loginBoxWidth(double screenWitdth) {
     double loginBoxWidth = double.infinity;
 
@@ -18,9 +89,6 @@ class _LoginState extends State<Login> {
 
     return loginBoxWidth;
   }
-
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +160,9 @@ class _LoginState extends State<Login> {
                           Container(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                login(context);
+                              },
                               child: const Padding(
                                 padding: EdgeInsets.all(12),
                                 child: Text(
