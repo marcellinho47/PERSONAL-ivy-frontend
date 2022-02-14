@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/config/routes.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 import 'package:sys_ivy_frontend/utils/functions.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
@@ -36,17 +37,11 @@ class _LoginState extends State<Login> {
     if (isValidForm(email, password)) {
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
-          .then((auth) => {
-                // TODO
-                print(auth.user?.uid),
-              })
-          .onError((error, stackTrace) => {
-                // TODO REVISAR
-                setState(() {
-                  showErrorToast(context, "Usuário ou Senha inválidos.");
-                  resetFields();
-                })
-              });
+          .then((auth) {
+        Navigator.pushReplacementNamed(context, Routes.HOME_ROUTE);
+      }).onError((error, stackTrace) {
+        showErrorToast(context, "Usuário e/ou Senha inválidos");
+      });
     } else {
       setState(() {
         showWarningToast(context, _toastMsg.toString());

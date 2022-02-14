@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/screens/login.dart';
+import 'package:sys_ivy_frontend/config/routes.dart';
+
 import 'firebase_options.dart';
 
 void main() async {
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.grey,
       ),
-      home: const Login(),
+      initialRoute: Routes.HOME_ROUTE,
+      onGenerateRoute: Routes.createRoute,
     );
   }
 }
