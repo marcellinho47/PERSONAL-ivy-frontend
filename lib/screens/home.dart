@@ -24,7 +24,7 @@ class _HomeState extends State<Home> {
         ),
         centerTitle: true,
       ),
-      drawer: const NavBar(),
+      drawer: NavBar(),
     );
   }
 }

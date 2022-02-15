@@ -1,27 +1,56 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
 class NavBar extends StatelessWidget {
-  const NavBar({Key? key}) : super(key: key);
+  NavBar({Key? key}) : super(key: key);
 
   final double _elevation = 2;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool hasUserImage() {
+    if (_auth.currentUser != null && _auth.currentUser!.photoURL != null) {
+      return true;
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      
       child: ListView(
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text('Oflutter.com'),
-            accountEmail: Text('example@gmail.com'),
+            accountName: Text(
+              _auth.currentUser == null
+                  ? 'Dev'
+                  : _auth.currentUser!.displayName!,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            accountEmail: Text(
+              _auth.currentUser == null
+                  ? 'javaaplication.alves@gmail.com'
+                  : _auth.currentUser!.email!,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            ),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: Image.network(
-                  'https://oflutter.com/wp-content/uploads/2021/02/girl-profile.png',
-                  fit: BoxFit.cover,
-                  width: 90,
-                  height: 90,
-                ),
+                child: hasUserImage()
+                    ? Image.network(
+                        _auth.currentUser!.photoURL!,
+                        fit: BoxFit.cover,
+                        width: 90,
+                        height: 90,
+                      )
+                    : const Icon(
+                        Icons.person_outline_rounded,
+                        size: 45,
+                      ),
               ),
             ),
             decoration: const BoxDecoration(
@@ -81,7 +110,10 @@ class NavBar extends StatelessWidget {
             child: ListTile(
               title: const Text("Sair"),
               leading: const Icon(Icons.exit_to_app_rounded),
-              onTap: () {},
+              onTap: () async {
+                await _auth.signOut();
+                Navigator.pushReplacementNamed(context, "");
+              },
             ),
           ),
         ],
