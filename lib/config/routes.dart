@@ -3,15 +3,20 @@ import 'package:sys_ivy_frontend/screens/home.dart';
 import 'package:sys_ivy_frontend/screens/login.dart';
 
 class Routes {
-
   // ADD NEW ROUTES HERE
   static const String INITAL_ROUTE = "/";
   static const String LOGIN_ROUTE = "/login";
   static const String HOME_ROUTE = "/home";
+  static const String DASHBOARD_ROUTE = "/dashboard";
+  static const String PURCHASES_ROUTE = "/purchases";
+  static const String SALES_ROUTE = "/sales";
+  static const String CATEGORIES_ROUTE = "/categories";
+  static const String PRODUCTS_ROUTE = "/products";
+  static const String STOCK_ROUTE = "/stock";
+  static const String LOGOUT_ROUTE = "/logout";
 
   // NAVIGATION
   static Route<dynamic> createRoute(RouteSettings settings) {
-
     final args = settings.arguments;
 
     switch (settings.name) {
