@@ -39,7 +39,7 @@ class _LoginState extends State<Login> {
           .signInWithEmailAndPassword(email: email, password: password)
           .then((auth) {
    //       _auth.currentUser!.updatePhotoURL("https://firebasestorage.googleapis.com/v0/b/sys-ivy.appspot.com/o/images%2Fusers%2FpJzWv6IYfAY4nEmEMtjMQIVYZnW2.jpg?alt=media&token=86caf0ec-6d50-4065-b6f8-f18801729456");
-        print(_auth.currentUser);
+   //     print(_auth.currentUser);
 
         Navigator.pushReplacementNamed(context, Routes.HOME_ROUTE);
       }).onError((error, stackTrace) {

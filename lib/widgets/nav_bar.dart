@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
@@ -6,19 +9,27 @@ class NavBar extends StatelessWidget {
   NavBar({Key? key}) : super(key: key);
 
   final double _elevation = 2;
+  Uint8List? _userPhoto;
   FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseStorage _storage = FirebaseStorage.instance;
 
   bool hasUserImage() {
-    if (_auth.currentUser != null && _auth.currentUser!.photoURL != null) {
+    if (_auth.currentUser != null &&
+        _auth.currentUser!.photoURL != null &&
+        _userPhoto != null) {
       return true;
     }
     return false;
   }
 
+  void getImage() async {
+    Reference ref = _storage.ref("images/users/${_auth.currentUser!.uid}.jpg");
+    Uint8List? _userPhoto = await ref.getData().whenComplete(() => null);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      
       child: ListView(
         children: [
           UserAccountsDrawerHeader(
@@ -40,13 +51,20 @@ class NavBar extends StatelessWidget {
             ),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: hasUserImage()
-                    ? Image.network(
-                        _auth.currentUser!.photoURL!,
+                child: getImage().whenComplete(() => {hasUserImage()})
+                    ? Image.memory(
+                        _userPhoto!,
                         fit: BoxFit.cover,
                         width: 90,
                         height: 90,
                       )
+
+                    /*Image.network(
+                        _auth.currentUser!.photoURL!,
+                        fit: BoxFit.cover,
+                        width: 90,
+                        height: 90,
+                      ) */
                     : const Icon(
                         Icons.person_outline_rounded,
                         size: 45,
