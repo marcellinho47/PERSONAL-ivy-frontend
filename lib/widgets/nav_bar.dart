@@ -1,30 +1,31 @@
-import 'dart:typed_data';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
-class NavBar extends StatelessWidget {
-  NavBar({Key? key}) : super(key: key);
+class NavBar extends StatefulWidget {
+  const NavBar({Key? key}) : super(key: key);
 
+  @override
+  _NavBarState createState() => _NavBarState();
+}
+
+class _NavBarState extends State<NavBar> {
   final double _elevation = 2;
-  Uint8List? _userPhoto;
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseStorage _storage = FirebaseStorage.instance;
 
-  bool hasUserImage() {
-    if (_auth.currentUser != null &&
-        _auth.currentUser!.photoURL != null &&
-        _userPhoto != null) {
+  bool hasUserPhoto() {
+    if (_auth.currentUser != null && _auth.currentUser!.photoURL != null) {
       return true;
     }
     return false;
   }
 
-  void getImage() async {
-    Reference ref = _storage.ref("images/users/${_auth.currentUser!.uid}.jpg");
-    Uint8List? _userPhoto = await ref.getData().whenComplete(() => null);
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -51,20 +52,11 @@ class NavBar extends StatelessWidget {
             ),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
-                child: getImage().whenComplete(() => {hasUserImage()})
-                    ? Image.memory(
-                        _userPhoto!,
-                        fit: BoxFit.cover,
-                        width: 90,
-                        height: 90,
+                child: hasUserPhoto()
+                    ? Image(
+                        image: CachedNetworkImageProvider(
+                            _auth.currentUser!.photoURL!),
                       )
-
-                    /*Image.network(
-                        _auth.currentUser!.photoURL!,
-                        fit: BoxFit.cover,
-                        width: 90,
-                        height: 90,
-                      ) */
                     : const Icon(
                         Icons.person_outline_rounded,
                         size: 45,

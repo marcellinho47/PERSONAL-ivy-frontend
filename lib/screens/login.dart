@@ -26,8 +26,8 @@ class _LoginState extends State<Login> {
 
   void resetFields() {
     _toastMsg = StringBuffer("");
-    _emailController.text = "";
-    _passwordController.text = "";
+    _emailController.text = "marcello_doalves@hotmail.com";
+    _passwordController.text = "soumaisbulcao";
   }
 
   Future<void> login(BuildContext context) async {
