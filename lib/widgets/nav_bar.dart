@@ -118,6 +118,14 @@ class _NavBarState extends State<NavBar> {
           Card(
             elevation: _elevation,
             child: ListTile(
+              title: const Text("Operadores"),
+              leading: const Icon(Icons.person_pin_circle_rounded),
+              onTap: () {},
+            ),
+          ),
+          Card(
+            elevation: _elevation,
+            child: ListTile(
               title: const Text("Sair"),
               leading: const Icon(Icons.exit_to_app_rounded),
               onTap: () async {
