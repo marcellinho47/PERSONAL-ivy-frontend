@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/screens/dashboard.dart';
 import 'package:sys_ivy_frontend/screens/home.dart';
 import 'package:sys_ivy_frontend/screens/login.dart';
+import 'package:sys_ivy_frontend/screens/operator.dart';
 
 class Routes {
   // ADD NEW ROUTES HERE
@@ -26,7 +28,21 @@ class Routes {
       case LOGIN_ROUTE:
         return MaterialPageRoute(builder: (_) => const Login());
       case HOME_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home());
+        return MaterialPageRoute(builder: (_) => Home());
+      case DASHBOARD_ROUTE:
+        return MaterialPageRoute(builder: (_) => Home());
+      case PURCHASES_ROUTE:
+        return MaterialPageRoute(builder: (_) => Home());
+      case SALES_ROUTE:
+        return MaterialPageRoute(builder: (_) => Home());
+      case CATEGORIES_ROUTE:
+        return MaterialPageRoute(builder: (_) => Home());
+      case PRODUCTS_ROUTE:
+        return MaterialPageRoute(builder: (_) => Home());
+      case STOCK_ROUTE:
+        return MaterialPageRoute(builder: (_) => Home());
+      case OPERATOR_ROUTE:
+        return MaterialPageRoute(builder: (_) => Home());
     }
 
     return _errorNotFoundRoute();

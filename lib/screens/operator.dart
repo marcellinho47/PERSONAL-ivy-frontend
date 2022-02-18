@@ -10,6 +10,8 @@ class Operator extends StatefulWidget {
 class _OperatorState extends State<Operator> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return const Center(
+      child: Text("OPERADORRRR"),
+    );
   }
 }

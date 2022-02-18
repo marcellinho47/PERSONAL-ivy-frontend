@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/config/routes.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
 class NavBar extends StatefulWidget {
@@ -72,7 +73,9 @@ class _NavBarState extends State<NavBar> {
             child: ListTile(
               title: const Text("Dashboard"),
               leading: const Icon(Icons.dashboard_rounded),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacementNamed(context, Routes.DASHBOARD_ROUTE);
+              },
             ),
           ),
           Card(
@@ -80,7 +83,9 @@ class _NavBarState extends State<NavBar> {
             child: ListTile(
               title: const Text("Compras"),
               leading: const Icon(Icons.shopping_cart_rounded),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacementNamed(context, Routes.PURCHASES_ROUTE);
+              },
             ),
           ),
           Card(
@@ -88,7 +93,9 @@ class _NavBarState extends State<NavBar> {
             child: ListTile(
               title: const Text("Vendas"),
               leading: const Icon(Icons.monetization_on_rounded),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacementNamed(context, Routes.SALES_ROUTE);
+              },
             ),
           ),
           Card(
@@ -96,7 +103,9 @@ class _NavBarState extends State<NavBar> {
             child: ListTile(
               title: const Text("Produtos"),
               leading: const Icon(Icons.tag_rounded),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacementNamed(context, Routes.PRODUCTS_ROUTE);
+              },
             ),
           ),
           Card(
@@ -104,7 +113,10 @@ class _NavBarState extends State<NavBar> {
             child: ListTile(
               title: const Text("Categorias"),
               leading: const Icon(Icons.label_outline_rounded),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacementNamed(
+                    context, Routes.CATEGORIES_ROUTE);
+              },
             ),
           ),
           Card(
@@ -112,7 +124,9 @@ class _NavBarState extends State<NavBar> {
             child: ListTile(
               title: const Text("Estoque"),
               leading: const Icon(Icons.storage_rounded),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacementNamed(context, Routes.STOCK_ROUTE);
+              },
             ),
           ),
           Card(
@@ -120,7 +134,9 @@ class _NavBarState extends State<NavBar> {
             child: ListTile(
               title: const Text("Operadores"),
               leading: const Icon(Icons.person_pin_circle_rounded),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacementNamed(context, Routes.OPERATOR_ROUTE);
+              },
             ),
           ),
           Card(
@@ -130,7 +146,7 @@ class _NavBarState extends State<NavBar> {
               leading: const Icon(Icons.exit_to_app_rounded),
               onTap: () async {
                 await _auth.signOut();
-                Navigator.pushReplacementNamed(context, "");
+                Navigator.pushReplacementNamed(context, Routes.INITAL_ROUTE);
               },
             ),
           ),
