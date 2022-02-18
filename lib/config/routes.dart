@@ -13,6 +13,7 @@ class Routes {
   static const String CATEGORIES_ROUTE = "/categories";
   static const String PRODUCTS_ROUTE = "/products";
   static const String STOCK_ROUTE = "/stock";
+  static const String OPERATOR_ROUTE = "/operator";
   static const String LOGOUT_ROUTE = "/logout";
 
   // NAVIGATION

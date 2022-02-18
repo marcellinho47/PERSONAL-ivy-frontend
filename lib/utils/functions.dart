@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class UtilFunctions {
   static bool isValidEmail(String email) {
     return RegExp(
