@@ -28,21 +28,21 @@ class Routes {
       case LOGIN_ROUTE:
         return MaterialPageRoute(builder: (_) => const Login());
       case HOME_ROUTE:
-        return MaterialPageRoute(builder: (_) => Home());
+        return MaterialPageRoute(builder: (_) => const Home(null));
       case DASHBOARD_ROUTE:
-        return MaterialPageRoute(builder: (_) => Home());
+        return MaterialPageRoute(builder: (_) => const Home(DashBoard()));
       case PURCHASES_ROUTE:
-        return MaterialPageRoute(builder: (_) => Home());
+        return MaterialPageRoute(builder: (_) => const Home(null));
       case SALES_ROUTE:
-        return MaterialPageRoute(builder: (_) => Home());
+        return MaterialPageRoute(builder: (_) => const Home(null));
       case CATEGORIES_ROUTE:
-        return MaterialPageRoute(builder: (_) => Home());
+        return MaterialPageRoute(builder: (_) => const Home(null));
       case PRODUCTS_ROUTE:
-        return MaterialPageRoute(builder: (_) => Home());
+        return MaterialPageRoute(builder: (_) => const Home(null));
       case STOCK_ROUTE:
-        return MaterialPageRoute(builder: (_) => Home());
+        return MaterialPageRoute(builder: (_) => const Home(null));
       case OPERATOR_ROUTE:
-        return MaterialPageRoute(builder: (_) => Home());
+        return MaterialPageRoute(builder: (_) => const Home(Operator()));
     }
 
     return _errorNotFoundRoute();
