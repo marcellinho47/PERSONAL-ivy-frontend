@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes.dart';
+import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
 import 'firebase_options.dart';
 
@@ -22,9 +23,9 @@ class MyApp extends StatelessWidget {
       title: 'SYS - IVY',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.grey,
+        primaryColor: ColorPallete.primaryColor,
       ),
-      initialRoute: Routes.HOME_ROUTE,
+      initialRoute: Routes.OPERATOR_ROUTE,
       onGenerateRoute: Routes.createRoute,
     );
   }

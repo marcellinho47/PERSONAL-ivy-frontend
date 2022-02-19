@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
@@ -15,7 +14,6 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   final double _elevation = 2;
   FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseStorage _storage = FirebaseStorage.instance;
 
   bool hasUserPhoto() {
     if (_auth.currentUser != null && _auth.currentUser!.photoURL != null) {
