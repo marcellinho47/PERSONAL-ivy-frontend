@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/dao_config.dart';
+import 'package:sys_ivy_frontend/config/routes.dart';
 import 'package:sys_ivy_frontend/entity/operator_entity.dart';
+import 'package:sys_ivy_frontend/utils/color_pallete.dart';
+import 'package:sys_ivy_frontend/utils/material_banner.dart';
+import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 class Operator extends StatefulWidget {
   const Operator({Key? key}) : super(key: key);
@@ -12,6 +17,7 @@ class Operator extends StatefulWidget {
 
 class _OperatorState extends State<Operator> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
   List<OperatorEntity> _listOperators = [];
 
   @override
@@ -22,6 +28,8 @@ class _OperatorState extends State<Operator> {
   }
 
   void _listAllOperators() async {
+    _listOperators = [];
+
     CollectionReference operatorRef =
         _firestore.collection(DaoConfig.OPERATOR_COLLECTION);
 
@@ -36,7 +44,7 @@ class _OperatorState extends State<Operator> {
   }
 
   double _boxWidth(double _screenWidth) {
-    double loginBoxWidth = double.infinity;
+    double loginBoxWidth = _screenWidth;
 
     if (_screenWidth > 750) {
       loginBoxWidth = 700;
@@ -49,6 +57,59 @@ class _OperatorState extends State<Operator> {
     setState(() {
       _listOperators;
     });
+  }
+
+  void _addOperator() {
+    OperatorEntity op = _listOperators
+        .where((element) => element.idOperator == _auth.currentUser!.uid)
+        .toList()
+        .first;
+    if (op.isAdmin != null && !op.isAdmin!) {
+      showWarningToast(context, "Usuário sem permissão.");
+    }
+
+    Navigator.pushReplacementNamed(context, Routes.OPERATOR_ADD_EDIT_ROUTE);
+  }
+
+  void _editOperator() {
+    if (_countSelectOperators() != 1) {
+      showWarningToast(context, "Para a edição escolha apenas 1 registro!");
+    } else {}
+  }
+
+  Future<void> _deleteOperator() async {
+    if (_countSelectOperators() != 1) {
+      showWarningToast(context, "Para a exlusão escolha ao menos 1 registro!");
+    } else {
+      // TODO - ADD CONFIRMATION
+
+      showBanner(
+          context, "Deseja realmente excluir?", ColorPallete.primaryColor);
+
+      // execute delete
+      List<OperatorEntity> list =
+          _listOperators.where((element) => element.isSelect).toList();
+
+      for (var i = 0; i < list.length; i++) {
+        list.elementAt(i).idOperatorExclusion = _auth.currentUser!.uid;
+        list.elementAt(i).exclusionDate = Timestamp.now();
+
+        await _firestore
+            .collection(DaoConfig.OPERATOR_COLLECTION)
+            .doc(list.elementAt(i).idOperator)
+            .update(list.elementAt(i).toJson());
+
+        //  showSuccessToast(context, "Registros deletados com sucesso.");
+
+        setState(() {
+          _listAllOperators();
+        });
+      }
+    }
+  }
+
+  int _countSelectOperators() {
+    return _listOperators.where((element) => element.isSelect).toList().length;
   }
 
   @override
@@ -100,7 +161,9 @@ class _OperatorState extends State<Operator> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _addOperator();
+                  },
                   style: ButtonStyle(
                     padding:
                         MaterialStateProperty.all(const EdgeInsets.all(20)),
@@ -123,7 +186,9 @@ class _OperatorState extends State<Operator> {
                   width: 20,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _editOperator();
+                  },
                   style: ButtonStyle(
                     padding:
                         MaterialStateProperty.all(const EdgeInsets.all(20)),
@@ -146,7 +211,9 @@ class _OperatorState extends State<Operator> {
                   width: 20,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _deleteOperator();
+                  },
                   style: ButtonStyle(
                     padding:
                         MaterialStateProperty.all(const EdgeInsets.all(20)),

@@ -3,6 +3,7 @@ import 'package:sys_ivy_frontend/screens/dashboard.dart';
 import 'package:sys_ivy_frontend/screens/home.dart';
 import 'package:sys_ivy_frontend/screens/login.dart';
 import 'package:sys_ivy_frontend/screens/operator.dart';
+import 'package:sys_ivy_frontend/screens/operator_add_edit.dart';
 
 class Routes {
   // ADD NEW ROUTES HERE
@@ -16,6 +17,7 @@ class Routes {
   static const String PRODUCTS_ROUTE = "/products";
   static const String STOCK_ROUTE = "/stock";
   static const String OPERATOR_ROUTE = "/operator";
+  static const String OPERATOR_ADD_EDIT_ROUTE = "/operator/add_edit";
   static const String LOGOUT_ROUTE = "/logout";
 
   // NAVIGATION
@@ -43,6 +45,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const Home(null));
       case OPERATOR_ROUTE:
         return MaterialPageRoute(builder: (_) => const Home(Operator()));
+      case OPERATOR_ADD_EDIT_ROUTE:
+        return MaterialPageRoute(builder: (_) => const Home(OperatorAddEdit()));
     }
 
     return _errorNotFoundRoute();

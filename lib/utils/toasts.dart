@@ -25,16 +25,21 @@ void showWarningToast(BuildContext context, String warningMsg) {
             warningMsg,
             textAlign: TextAlign.center,
             style: const TextStyle(
-                color: Color.fromRGBO(0, 0, 0, 1), fontSize: 14.0),
+              color: Color.fromRGBO(0, 0, 0, 1),
+              fontSize: 14.0,
+            ),
           )
         ],
       ),
+      elevation: 5,
       duration: const Duration(seconds: 5),
       backgroundColor: Colors.yellow,
       behavior: SnackBarBehavior.floating,
       width: 240.0,
+
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(25))),
+        borderRadius: BorderRadius.all(Radius.circular(25)),
+      ),
     ),
   );
 }
