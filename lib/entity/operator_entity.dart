@@ -37,7 +37,7 @@ class OperatorEntity {
   Map<String, dynamic> toJson() => {
         'login': login,
         'password': password,
-        'idAdmin': isAdmin,
+        'isAdmin': isAdmin,
         'idOperatorInclusion': idOperatorInclusion,
         'inclusionDate': inclusionDate,
         'idOperatorExclusion': idOperatorExclusion,

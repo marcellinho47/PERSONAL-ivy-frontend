@@ -55,10 +55,10 @@ class _LoginState extends State<Login> {
     _toastMsg = StringBuffer("");
 
     // EMAIL
-    if (email != null && email.isEmpty) {
+    if (email == null || email.isEmpty) {
       _toastMsg.write("E-mail não informado.\n");
       isValidForm = false;
-    } else if (!UtilFunctions.isValidEmail(email!)) {
+    } else if (!UtilFunctions.isValidEmail(email)) {
       _toastMsg.write("E-mail inválido.\n");
       isValidForm = false;
     }

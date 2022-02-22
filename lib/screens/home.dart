@@ -6,8 +6,9 @@ import 'package:sys_ivy_frontend/widgets/nav_bar.dart';
 
 class Home extends StatefulWidget {
   final Widget? widgetBody;
+  final String screenName;
 
-  const Home(this.widgetBody, {Key? key}) : super(key: key);
+  const Home(this.widgetBody, this.screenName, {Key? key}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -16,6 +17,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   Widget? _widgetBody;
+  late String _screenName;
 
   void _checkOperatorLogin() async {
     if (_auth.currentUser == null) {
@@ -29,6 +31,7 @@ class _HomeState extends State<Home> {
     super.initState();
 
     _widgetBody = widget.widgetBody;
+    _screenName = widget.screenName;
     _checkOperatorLogin();
   }
 
@@ -37,11 +40,10 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorPallete.primaryColor,
-        title: const Text(
-          "IVY",
-          style: TextStyle(
+        title: Text(
+          "IVY - $_screenName",
+          style: const TextStyle(
             color: Colors.white,
-            fontFamily: "VogueProject",
           ),
         ),
         centerTitle: true,

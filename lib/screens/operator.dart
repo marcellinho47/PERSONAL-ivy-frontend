@@ -28,6 +28,7 @@ class _OperatorState extends State<Operator> {
   }
 
   void _listAllOperators() async {
+    // TODO remove exclusion operator
     _listOperators = [];
 
     CollectionReference operatorRef =
@@ -73,18 +74,21 @@ class _OperatorState extends State<Operator> {
 
   void _editOperator() {
     if (_countSelectOperators() != 1) {
-      showWarningToast(context, "Para a edição escolha apenas 1 registro!");
-    } else {}
+      showWarningToast(context, "Para a edição escolha 1 registro!");
+    } else {
+      OperatorEntity op =
+          _listOperators.where((element) => element.isSelect).toList().first;
+
+      Navigator.pushReplacementNamed(context, Routes.OPERATOR_ADD_EDIT_ROUTE,
+          arguments: op.idOperator);
+    }
   }
 
   Future<void> _deleteOperator() async {
-    if (_countSelectOperators() != 1) {
+    if (_countSelectOperators() < 1) {
       showWarningToast(context, "Para a exlusão escolha ao menos 1 registro!");
     } else {
       // TODO - ADD CONFIRMATION
-
-      showBanner(
-          context, "Deseja realmente excluir?", ColorPallete.primaryColor);
 
       // execute delete
       List<OperatorEntity> list =
@@ -98,13 +102,11 @@ class _OperatorState extends State<Operator> {
             .collection(DaoConfig.OPERATOR_COLLECTION)
             .doc(list.elementAt(i).idOperator)
             .update(list.elementAt(i).toJson());
-
-        //  showSuccessToast(context, "Registros deletados com sucesso.");
-
-        setState(() {
-          _listAllOperators();
-        });
       }
+      setState(() {
+        showSuccessToast(context, "Registros excluídos com sucesso.");
+        _listAllOperators();
+      });
     }
   }
 
@@ -171,14 +173,14 @@ class _OperatorState extends State<Operator> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: const [
+                      Text("Adicionar"),
+                      SizedBox(
+                        width: 5,
+                      ),
                       Icon(
                         Icons.person_add_alt_rounded,
                         size: 15,
                       ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text("Adicionar"),
                     ],
                   ),
                 ),
@@ -196,14 +198,14 @@ class _OperatorState extends State<Operator> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: const [
+                      Text("Editar"),
+                      SizedBox(
+                        width: 5,
+                      ),
                       Icon(
                         Icons.mode_edit_outline_rounded,
                         size: 15,
                       ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text("Editar"),
                     ],
                   ),
                 ),
@@ -221,14 +223,14 @@ class _OperatorState extends State<Operator> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: const [
+                      Text("Excluir"),
+                      SizedBox(
+                        width: 5,
+                      ),
                       Icon(
                         Icons.delete_outline_rounded,
                         size: 15,
                       ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Text("Excluir"),
                     ],
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/config/screens.dart';
 import 'package:sys_ivy_frontend/screens/dashboard.dart';
 import 'package:sys_ivy_frontend/screens/home.dart';
 import 'package:sys_ivy_frontend/screens/login.dart';
@@ -30,23 +31,34 @@ class Routes {
       case LOGIN_ROUTE:
         return MaterialPageRoute(builder: (_) => const Login());
       case HOME_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home(null));
+        return MaterialPageRoute(
+            builder: (_) => const Home(null, ScreenName.HOME_SCREEN));
       case DASHBOARD_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home(DashBoard()));
+        return MaterialPageRoute(
+            builder: (_) =>
+                const Home(DashBoard(), ScreenName.DASHBOARD_SCREEN));
       case PURCHASES_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home(null));
+        return MaterialPageRoute(
+            builder: (_) => const Home(null, ScreenName.PURCHASES_SCREEN));
       case SALES_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home(null));
+        return MaterialPageRoute(
+            builder: (_) => const Home(null, ScreenName.SALES_SCREEN));
       case CATEGORIES_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home(null));
+        return MaterialPageRoute(
+            builder: (_) => const Home(null, ScreenName.CATEGORIES_SCREEN));
       case PRODUCTS_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home(null));
+        return MaterialPageRoute(
+            builder: (_) => const Home(null, ScreenName.PRODUCTS_SCREEN));
       case STOCK_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home(null));
+        return MaterialPageRoute(
+            builder: (_) => const Home(null, ScreenName.STOCK_SCREEN));
       case OPERATOR_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home(Operator()));
+        return MaterialPageRoute(
+            builder: (_) => const Home(Operator(), ScreenName.OPERATOR_SCREEN));
       case OPERATOR_ADD_EDIT_ROUTE:
-        return MaterialPageRoute(builder: (_) => const Home(OperatorAddEdit()));
+        return MaterialPageRoute(
+            builder: (_) => Home(
+                OperatorAddEdit(args), ScreenName.OPERATOR_ADD_EDIT_SCREEN));
     }
 
     return _errorNotFoundRoute();
