@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/config/dao_config.dart';
+import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/config/routes.dart';
 import 'package:sys_ivy_frontend/entity/operator_entity.dart';
-import 'package:sys_ivy_frontend/utils/color_pallete.dart';
-import 'package:sys_ivy_frontend/utils/material_banner.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 class Operator extends StatefulWidget {
@@ -66,7 +64,7 @@ class _OperatorState extends State<Operator> {
         .toList()
         .first;
     if (op.isAdmin != null && !op.isAdmin!) {
-      showWarningToast(context, "Usuário sem permissão.");
+      showWarningToast(context, "Usuário sem permissão para cadastro.");
     }
 
     Navigator.pushReplacementNamed(context, Routes.OPERATOR_ADD_EDIT_ROUTE);
@@ -78,6 +76,11 @@ class _OperatorState extends State<Operator> {
     } else {
       OperatorEntity op =
           _listOperators.where((element) => element.isSelect).toList().first;
+
+      if (op.idOperator != _auth.currentUser!.uid) {
+        showWarningToast(context, "Só é possível alterar o seu cadastro!");
+        return;
+      }
 
       Navigator.pushReplacementNamed(context, Routes.OPERATOR_ADD_EDIT_ROUTE,
           arguments: op.idOperator);
@@ -137,7 +140,7 @@ class _OperatorState extends State<Operator> {
               columns: const <DataColumn>[
                 DataColumn(
                   label: Text(
-                    'ID Operador',
+                    'Operador',
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -259,7 +262,7 @@ class OperatorDataTableSource extends DataTableSource {
       index: index,
       cells: <DataCell>[
         DataCell(
-          Text(_listOperators[index].idOperator ?? ""),
+          Text(_listOperators[index].name ?? ""),
         ),
         DataCell(
           Text(_listOperators[index].login ?? ""),

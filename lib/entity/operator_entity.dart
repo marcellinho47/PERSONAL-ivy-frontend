@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OperatorEntity {
   String? idOperator;
+  String? name;
   String? login;
   String? password;
   bool? isAdmin = false;
@@ -10,13 +11,16 @@ class OperatorEntity {
   String? idOperatorExclusion;
   Timestamp? exclusionDate;
   bool isSelect = false;
+  String? imageURL;
 
   OperatorEntity(
       {this.idOperator,
+      this.name,
       this.login,
       this.password,
       this.isAdmin,
       this.isSelect = false,
+      this.imageURL,
       this.idOperatorInclusion,
       this.inclusionDate,
       this.idOperatorExclusion,
@@ -25,9 +29,11 @@ class OperatorEntity {
   factory OperatorEntity.fromDocument(DocumentSnapshot doc) {
     return OperatorEntity(
         idOperator: doc.id,
+        name: doc.get("name"),
         login: doc.get('login'),
         password: doc.get('password'),
         isAdmin: doc.get('isAdmin'),
+        imageURL: doc.get('imageURL'),
         idOperatorInclusion: doc.get('idOperatorInclusion'),
         inclusionDate: doc.get('inclusionDate'),
         idOperatorExclusion: doc.get('idOperatorExclusion'),
@@ -35,9 +41,11 @@ class OperatorEntity {
   }
 
   Map<String, dynamic> toJson() => {
+        'name': name,
         'login': login,
         'password': password,
         'isAdmin': isAdmin,
+        'imageURL': imageURL,
         'idOperatorInclusion': idOperatorInclusion,
         'inclusionDate': inclusionDate,
         'idOperatorExclusion': idOperatorExclusion,
