@@ -1,8 +1,14 @@
+import 'dart:typed_data';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/config/dao_config.dart';
+import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/config/roles.dart';
+import 'package:sys_ivy_frontend/config/routes.dart';
 import 'package:sys_ivy_frontend/entity/operator_entity.dart';
 import 'package:sys_ivy_frontend/utils/functions.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
@@ -17,14 +23,19 @@ class OperatorAddEdit extends StatefulWidget {
 
 class _OperatorAddEditState extends State<OperatorAddEdit> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseStorage _storage = FirebaseStorage.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   Object? _args;
 
   TextEditingController _uid = TextEditingController();
+  TextEditingController _name = TextEditingController();
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
   TextEditingController _passwordConfirmation = TextEditingController();
   TextEditingController _isAdmin = TextEditingController();
+  String? _imageURL;
+  Uint8List? _imageTEMP;
+
   StringBuffer _toastMsg = StringBuffer("");
   String? dropdownRoleValue;
   OperatorEntity? op;
@@ -60,10 +71,13 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
     op = OperatorEntity();
     dropdownRoleValue = Roles.ROLE_OPERADOR;
     _uid.text = "";
+    _name.text = "";
     _email.text = "";
     _password.text = "";
     _passwordConfirmation.text = "";
     _isAdmin.text = Roles.ROLE_OPERADOR;
+    _imageURL = "";
+    _imageTEMP = null;
   }
 
   void _setEntitytoForm() {
@@ -71,6 +85,8 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
     _email.text = op!.login!;
     _password.text = op!.password!;
     _passwordConfirmation.text = op!.password!;
+    _name.text = op!.name!;
+    _imageURL = op!.imageURL!;
 
     if (op!.isAdmin!) {
       dropdownRoleValue = Roles.ROLE_ADMIN;
@@ -83,6 +99,8 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
     op!.idOperator = _uid.text;
     op!.login = _email.text;
     op!.password = _password.text;
+    op!.name = _name.text;
+    op!.imageURL = _imageURL;
 
     if (dropdownRoleValue == Roles.ROLE_ADMIN) {
       op!.isAdmin = true;
@@ -95,6 +113,12 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
     bool isValidForm = true;
     _toastMsg = StringBuffer("");
 
+    // NAME
+    if (_name.text.isEmpty || _name.text.length < 2) {
+      _toastMsg.write("Nome não informado.\n");
+      isValidForm = false;
+    }
+
     // EMAIL - LOGIN
     if (_email.text.isEmpty) {
       _toastMsg.write("E-mail não informado.\n");
@@ -103,7 +127,7 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
       _toastMsg.write("E-mail inválido.\n");
       isValidForm = false;
     }
-
+/*
     // PASSWORD
     if (_password.text.isEmpty) {
       _toastMsg.write("Senha não informada.\n");
@@ -132,19 +156,22 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
       _passwordConfirmation.text = "";
       isValidForm = false;
     }
+    */
 
     if (isValidForm) {
-      _saveUpdateOperator();
+      _createUpdateOperator();
     } else {
       showWarningToast(context, _toastMsg.toString());
     }
   }
 
-  void _saveUpdateOperator() async {
+  void _createUpdateOperator() async {
     _setFormToEntity();
 
     if (op!.idOperator == null || op!.idOperator!.isEmpty) {
-      // CREATE
+      // CREATE ----------------------
+
+      // Firebase Auth User
       op!.idOperatorInclusion = _auth.currentUser!.uid;
       op!.inclusionDate = Timestamp.now();
       op!.exclusionDate = Timestamp.fromMillisecondsSinceEpoch(1);
@@ -152,22 +179,95 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
       UserCredential user = await _auth.createUserWithEmailAndPassword(
           email: op!.login!, password: op!.password!);
 
-      user.user!.uid;
+      String urlImg = _uploadImagem(user.user!.uid, op!.imageURL);
+
+      await user.user!.updateDisplayName(op!.name);
+      await user.user!.updatePhotoURL(urlImg);
+
+      // Firestore Auth User
+      op!.imageURL = urlImg;
+      op!.password = "";
 
       await _firestore
           .collection(DaoConfig.OPERATOR_COLLECTION)
           .doc(user.user!.uid)
           .set(op!.toJson());
+
+      // Return
+      _cleanForm();
+      showSuccessToast(context, "Operador cadastrado com sucesso!");
+      Navigator.pushReplacementNamed(context, Routes.OPERATOR_ROUTE);
     } else {
-      // UPDATE
+      // UPDATE ------------------------
+      String urlImg = _uploadImagem(_auth.currentUser!.uid, op!.imageURL);
+      op!.imageURL = urlImg;
+
+      _auth.currentUser!.updateDisplayName(op!.name);
+      _auth.currentUser!.updateEmail(op!.login!);
+ //     _auth.currentUser!.updatePassword(op!.password!);
+      _auth.currentUser!.updatePhotoURL(op!.imageURL);
+
+      op!.password = "";
+
       await _firestore
           .collection(DaoConfig.OPERATOR_COLLECTION)
           .doc(op!.idOperator)
           .update(op!.toJson());
+
+      // Return
+      showSuccessToast(context, "Operador alterado com sucesso!");
+      Navigator.pushReplacementNamed(context, Routes.LOGIN_ROUTE);
+    }
+  }
+
+  Widget _hasImage() {
+    if (_imageTEMP != null && _imageTEMP!.isNotEmpty) {
+      // Upload
+      return Image.memory(_imageTEMP!);
+    } else if (!(_imageURL == null || _imageURL!.isEmpty)) {
+      // Cloud
+      return ClipOval(
+        child: Image(
+          image: CachedNetworkImageProvider(_imageURL!),
+        ),
+      );
+    } else {
+      // Default
+      return const Icon(
+        Icons.person_rounded,
+      );
+    }
+  }
+
+  void _selectImage() async {
+    // image
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.image);
+
+    // recover the bytes
+    setState(() {
+      _imageTEMP = result?.files.single.bytes;
+    });
+  }
+
+  String _uploadImagem(String idUser, String? url) {
+    if (_imageTEMP != null) {
+      Reference imagemPerfilRef = _storage.ref("images/users/$idUser.jpg");
+
+      UploadTask uploadTask = imagemPerfilRef.putData(
+        _imageTEMP!,
+        SettableMetadata(
+          contentType: 'image/jpeg',
+        ),
+      );
+
+      uploadTask.whenComplete(() async {
+        String savedUrl = await uploadTask.snapshot.ref.getDownloadURL();
+        return savedUrl;
+      });
     }
 
-    _cleanForm();
-    showSuccessToast(context, "Operador cadastrado com sucesso!");
+    return url ?? "";
   }
 
   @override
@@ -193,12 +293,22 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
               child: Padding(
                 padding: const EdgeInsets.all(15),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // TODO add file picker
-                    // TODO add name of operator
-
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    IconButton(
+                      onPressed: _selectImage,
+                      iconSize: 100,
+                      padding: EdgeInsets.zero,
+                      splashRadius: 55,
+                      icon: _hasImage(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     TextField(
                       controller: _uid,
                       keyboardType: TextInputType.text,
@@ -207,6 +317,16 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
                         hintText: "",
                         labelText: "ID Operador",
                         suffixIcon: Icon(Icons.star_border_rounded),
+                      ),
+                    ),
+                    TextField(
+                      controller: _name,
+                      keyboardType: TextInputType.text,
+                      enabled: true,
+                      decoration: const InputDecoration(
+                        hintText: "",
+                        labelText: "Nome",
+                        suffixIcon: Icon(Icons.person_outline_rounded),
                       ),
                     ),
                     TextField(
@@ -219,6 +339,7 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
                         suffixIcon: Icon(Icons.mail_outline_rounded),
                       ),
                     ),
+                    /*
                     TextField(
                       controller: _password,
                       keyboardType: TextInputType.text,
@@ -241,6 +362,8 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
                         suffixIcon: Icon(Icons.lock_outline_rounded),
                       ),
                     ),
+                        */
+
                     const SizedBox(
                       height: 10,
                     ),
@@ -257,6 +380,7 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
                           width: 5,
                         ),
                         DropdownButton(
+                          enableFeedback: op!.isAdmin,
                           hint: const Text("Selecão de Permissão"),
                           borderRadius: BorderRadius.circular(10),
                           value: dropdownRoleValue,
