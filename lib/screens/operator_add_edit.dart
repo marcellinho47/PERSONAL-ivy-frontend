@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -127,36 +128,40 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
       _toastMsg.write("E-mail inválido.\n");
       isValidForm = false;
     }
-/*
-    // PASSWORD
-    if (_password.text.isEmpty) {
-      _toastMsg.write("Senha não informada.\n");
 
-      isValidForm = false;
-    } else if (_password.text.length < 8) {
-      _toastMsg.write("Senha deve conter pelo menos 8 caracteres.\n");
-      _password.text = "";
-      isValidForm = false;
-    }
+    /**
+     * only when 
+     */
+    if (isCreate()) {
+      // PASSWORD
+      if (_password.text.isEmpty) {
+        _toastMsg.write("Senha não informada.\n");
 
-    // PASSWORD CONFIRMATION
-    if (_passwordConfirmation.text.isEmpty) {
-      _toastMsg.write("Confirmação de senha não informada.\n");
-      isValidForm = false;
-    } else if (_passwordConfirmation.text.length < 8) {
-      _toastMsg.write("Senha deve conter pelo menos 8 caracteres.\n");
-      _passwordConfirmation.text = "";
-      isValidForm = false;
-    }
+        isValidForm = false;
+      } else if (_password.text.length < 8) {
+        _toastMsg.write("Senha deve conter pelo menos 8 caracteres.\n");
+        _password.text = "";
+        isValidForm = false;
+      }
 
-    // PASSWORD and PASSWORD CONFIRMATION
-    if (_passwordConfirmation.text.isEmpty) {
-      _toastMsg.write("Senha e Confirmação de senha devem ser iguais.\n");
-      _password.text = "";
-      _passwordConfirmation.text = "";
-      isValidForm = false;
+      // PASSWORD CONFIRMATION
+      if (_passwordConfirmation.text.isEmpty) {
+        _toastMsg.write("Confirmação de Senha não informada.\n");
+        isValidForm = false;
+      } else if (_passwordConfirmation.text.length < 8) {
+        _toastMsg.write("Senha deve conter pelo menos 8 caracteres.\n");
+        _passwordConfirmation.text = "";
+        isValidForm = false;
+      }
+
+      // PASSWORD and PASSWORD CONFIRMATION
+      if (_password.text.compareTo(_passwordConfirmation.text) != 0) {
+        _toastMsg.write("Senha e Confirmação de Senha devem ser iguais.\n");
+        _password.text = "";
+        _passwordConfirmation.text = "";
+        isValidForm = false;
+      }
     }
-    */
 
     if (isValidForm) {
       _createUpdateOperator();
@@ -179,7 +184,7 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
       UserCredential user = await _auth.createUserWithEmailAndPassword(
           email: op!.login!, password: op!.password!);
 
-      String urlImg = _uploadImagem(user.user!.uid, op!.imageURL);
+      String urlImg = await _uploadImagem(user.user!.uid, op!.imageURL);
 
       await user.user!.updateDisplayName(op!.name);
       await user.user!.updatePhotoURL(urlImg);
@@ -199,13 +204,12 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
       Navigator.pushReplacementNamed(context, Routes.OPERATOR_ROUTE);
     } else {
       // UPDATE ------------------------
-      String urlImg = _uploadImagem(_auth.currentUser!.uid, op!.imageURL);
+      String urlImg = await _uploadImagem(_auth.currentUser!.uid, op!.imageURL);
       op!.imageURL = urlImg;
 
-      _auth.currentUser!.updateDisplayName(op!.name);
-      _auth.currentUser!.updateEmail(op!.login!);
- //     _auth.currentUser!.updatePassword(op!.password!);
-      _auth.currentUser!.updatePhotoURL(op!.imageURL);
+      await _auth.currentUser!.updateDisplayName(op!.name);
+      await _auth.currentUser!.updateEmail(op!.login!);
+      await _auth.currentUser!.updatePhotoURL(op!.imageURL);
 
       op!.password = "";
 
@@ -215,6 +219,7 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
           .update(op!.toJson());
 
       // Return
+      _auth.signOut();
       showSuccessToast(context, "Operador alterado com sucesso!");
       Navigator.pushReplacementNamed(context, Routes.LOGIN_ROUTE);
     }
@@ -224,7 +229,7 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
     if (_imageTEMP != null && _imageTEMP!.isNotEmpty) {
       // Upload
       return Image.memory(_imageTEMP!);
-    } else if (!(_imageURL == null || _imageURL!.isEmpty)) {
+    } else if (_imageURL != null && _imageURL!.isNotEmpty) {
       // Cloud
       return ClipOval(
         child: Image(
@@ -250,7 +255,7 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
     });
   }
 
-  String _uploadImagem(String idUser, String? url) {
+  Future<String> _uploadImagem(String idUser, String? url) async {
     if (_imageTEMP != null) {
       Reference imagemPerfilRef = _storage.ref("images/users/$idUser.jpg");
 
@@ -261,10 +266,8 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
         ),
       );
 
-      uploadTask.whenComplete(() async {
-        String savedUrl = await uploadTask.snapshot.ref.getDownloadURL();
-        return savedUrl;
-      });
+      String downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+      return downloadURL;
     }
 
     return url ?? "";
@@ -276,6 +279,10 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
 
     _args = widget.args;
     _getDataEdit();
+  }
+
+  bool isCreate() {
+    return _uid.text.isEmpty;
   }
 
   @override
@@ -339,31 +346,34 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
                         suffixIcon: Icon(Icons.mail_outline_rounded),
                       ),
                     ),
-                    /*
-                    TextField(
-                      controller: _password,
-                      keyboardType: TextInputType.text,
-                      enabled: true,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        hintText: "*******",
-                        labelText: "Senha",
-                        suffixIcon: Icon(Icons.lock_outline_rounded),
+                    Visibility(
+                      visible: isCreate(),
+                      child: TextField(
+                        controller: _password,
+                        keyboardType: TextInputType.text,
+                        enabled: true,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          hintText: "*******",
+                          labelText: "Senha",
+                          suffixIcon: Icon(Icons.lock_outline_rounded),
+                        ),
                       ),
                     ),
-                    TextField(
-                      controller: _passwordConfirmation,
-                      keyboardType: TextInputType.text,
-                      enabled: true,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        hintText: "*******",
-                        labelText: "Confirmação de Senha",
-                        suffixIcon: Icon(Icons.lock_outline_rounded),
+                    Visibility(
+                      visible: isCreate(),
+                      child: TextField(
+                        controller: _passwordConfirmation,
+                        keyboardType: TextInputType.text,
+                        enabled: true,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          hintText: "*******",
+                          labelText: "Confirmação de Senha",
+                          suffixIcon: Icon(Icons.lock_outline_rounded),
+                        ),
                       ),
                     ),
-                        */
-
                     const SizedBox(
                       height: 10,
                     ),
@@ -438,7 +448,9 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    _validForm();
+                    setState(() {
+                      _validForm();
+                    });
                   },
                   style: ButtonStyle(
                     padding:
