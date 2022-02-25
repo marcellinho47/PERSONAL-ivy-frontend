@@ -49,7 +49,10 @@ class _HomeState extends State<Home> {
         centerTitle: true,
       ),
       drawer: const NavBar(),
-      body: _widgetBody,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 50),
+        child: _widgetBody,
+      ),
     );
   }
 }

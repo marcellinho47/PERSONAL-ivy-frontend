@@ -34,23 +34,20 @@ class _NavBarState extends State<NavBar> {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              _auth.currentUser == null
-                  ? 'Dev'
-                  : _auth.currentUser!.displayName!,
+              _auth.currentUser!.displayName!,
               style: const TextStyle(
                 color: Colors.white,
               ),
             ),
             accountEmail: Text(
-              _auth.currentUser == null
-                  ? 'javaaplication.alves@gmail.com'
-                  : _auth.currentUser!.email!,
+              _auth.currentUser!.email!,
               style: const TextStyle(
                 color: Colors.white,
               ),
             ),
             currentAccountPicture: CircleAvatar(
               child: ClipOval(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: hasUserPhoto()
                     ? Image(
                         image: CachedNetworkImageProvider(

@@ -231,9 +231,15 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
       return Image.memory(_imageTEMP!);
     } else if (_imageURL != null && _imageURL!.isNotEmpty) {
       // Cloud
-      return ClipOval(
-        child: Image(
-          image: CachedNetworkImageProvider(_imageURL!),
+
+      return CircleAvatar(
+        radius: 45,
+        child: ClipOval(
+          child: Image(
+            image: CachedNetworkImageProvider(_imageURL!),
+            //      width: 400,
+            //    height: 400,
+          ),
         ),
       );
     } else {
