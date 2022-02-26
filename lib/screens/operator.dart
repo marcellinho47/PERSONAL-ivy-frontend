@@ -126,9 +126,6 @@ class _OperatorState extends State<Operator> {
         width: _boxWidth(_screenWidth),
         child: Column(
           children: [
-            const SizedBox(
-              height: 50,
-            ),
             PaginatedDataTable(
               header: const Text(
                 "Lista de Operadores",

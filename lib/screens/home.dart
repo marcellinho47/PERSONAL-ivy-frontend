@@ -50,8 +50,8 @@ class _HomeState extends State<Home> {
       ),
       drawer: const NavBar(),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 50),
         child: _widgetBody,
+        padding: const EdgeInsets.fromLTRB(0, 50, 0, 50),
       ),
     );
   }

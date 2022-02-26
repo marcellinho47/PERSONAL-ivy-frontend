@@ -10,8 +10,8 @@ class OperatorEntity {
   Timestamp? inclusionDate;
   String? idOperatorExclusion;
   Timestamp? exclusionDate;
-  bool isSelect = false;
   String? imageURL;
+  bool isSelect = false;
 
   OperatorEntity(
       {this.idOperator,

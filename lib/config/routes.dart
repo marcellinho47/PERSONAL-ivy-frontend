@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/screens.dart';
+import 'package:sys_ivy_frontend/screens/category_screen.dart';
 import 'package:sys_ivy_frontend/screens/dashboard.dart';
 import 'package:sys_ivy_frontend/screens/home.dart';
 import 'package:sys_ivy_frontend/screens/login.dart';
@@ -45,7 +46,8 @@ class Routes {
             builder: (_) => const Home(null, ScreenName.SALES_SCREEN));
       case CATEGORIES_ROUTE:
         return MaterialPageRoute(
-            builder: (_) => const Home(null, ScreenName.CATEGORIES_SCREEN));
+            builder: (_) =>
+                const Home(CategoryScreen(), ScreenName.CATEGORIES_SCREEN));
       case PRODUCTS_ROUTE:
         return MaterialPageRoute(
             builder: (_) => const Home(null, ScreenName.PRODUCTS_SCREEN));
