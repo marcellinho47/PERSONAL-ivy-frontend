@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/config/routes.dart';
+import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
 import 'firebase_options.dart';

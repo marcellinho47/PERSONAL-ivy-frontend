@@ -5,7 +5,7 @@ class CategoryEntity {
   String? description;
   bool? enabled;
 
-  bool? isSelect;
+  bool isSelect;
 
   CategoryEntity(
       {this.idCategory, this.description, this.enabled, this.isSelect = false});

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/firestore_config.dart';
-import 'package:sys_ivy_frontend/config/routes.dart';
+import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/entity/operator_entity.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 

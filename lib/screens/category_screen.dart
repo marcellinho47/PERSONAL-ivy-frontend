@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/entity/category_entity.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({Key? key}) : super(key: key);
@@ -104,4 +105,52 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
     );
   }
+}
+
+class CategoryDataTableSource extends DataTableSource {
+  List<CategoryEntity> _listCategories;
+  void Function() refreshComponent;
+
+  CategoryDataTableSource(this._listCategories, this.refreshComponent);
+
+  @override
+  DataRow? getRow(int index) {
+    return DataRow.byIndex(
+      onSelectChanged: (value) {
+        selectIndex(index, value);
+      },
+      selected: isSelect(index),
+      index: index,
+      cells: <DataCell>[
+        DataCell(
+          Text(_listCategories[index].idCategory.toString()),
+        ),
+        DataCell(
+          Text(_listCategories[index].description ?? ""),
+        ),
+        DataCell(_listCategories[index].enabled!
+            ? const Icon(Icons.check_circle_outline_rounded)
+            : const Text("")),
+      ],
+    );
+  }
+
+  void selectIndex(int index, bool? isSelect) {
+    _listCategories.elementAt(index).isSelect = isSelect ?? false;
+    refreshComponent();
+  }
+
+  bool isSelect(int index) {
+    return _listCategories.elementAt(index).isSelect;
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => _listCategories.length;
+
+  @override
+  int get selectedRowCount =>
+      _listCategories.where((element) => element.isSelect).toList().length;
 }

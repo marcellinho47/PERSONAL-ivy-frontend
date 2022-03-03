@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/config/routes.dart';
+import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
 class NavBar extends StatefulWidget {

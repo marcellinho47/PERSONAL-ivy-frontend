@@ -1,11 +1,13 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/config/screens.dart';
+import 'package:sys_ivy_frontend/config/screens_config.dart';
 import 'package:sys_ivy_frontend/screens/category_screen.dart';
-import 'package:sys_ivy_frontend/screens/dashboard.dart';
-import 'package:sys_ivy_frontend/screens/home.dart';
-import 'package:sys_ivy_frontend/screens/login.dart';
-import 'package:sys_ivy_frontend/screens/operator.dart';
-import 'package:sys_ivy_frontend/screens/operator_add_edit.dart';
+import 'package:sys_ivy_frontend/screens/dashboard_screen.dart';
+import 'package:sys_ivy_frontend/screens/home_screen.dart';
+import 'package:sys_ivy_frontend/screens/login_screen.dart';
+import 'package:sys_ivy_frontend/screens/operator_screen.dart';
+import 'package:sys_ivy_frontend/screens/operator_add_edit_screen.dart';
 
 class Routes {
   // ADD NEW ROUTES HERE
