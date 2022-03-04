@@ -14,10 +14,16 @@ class Operator extends StatefulWidget {
 }
 
 class _OperatorState extends State<Operator> {
+  // ----------------------------------------------------------
+  // VARIABLES
+  // ----------------------------------------------------------
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   List<OperatorEntity> _listOperators = [];
 
+  // ----------------------------------------------------------
+  // METHODS
+  // ----------------------------------------------------------
   @override
   void initState() {
     super.initState();
@@ -117,6 +123,9 @@ class _OperatorState extends State<Operator> {
     return _listOperators.where((element) => element.isSelect).toList().length;
   }
 
+  // ----------------------------------------------------------
+  // BUILD
+  // ----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     double _screenWidth = MediaQuery.of(context).size.width;
@@ -127,11 +136,6 @@ class _OperatorState extends State<Operator> {
         child: Column(
           children: [
             PaginatedDataTable(
-              header: const Text(
-                "Lista de Operadores",
-                textAlign: TextAlign.center,
-                style: TextStyle(),
-              ),
               rowsPerPage: 5,
               showCheckboxColumn: true,
               columns: const <DataColumn>[

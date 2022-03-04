@@ -9,8 +9,24 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
+  // ----------------------------------------------------------
+  // VARIABLES
+  // ----------------------------------------------------------
   TextEditingController _id = TextEditingController();
   TextEditingController _description = TextEditingController();
+
+  List<CategoryEntity> _listCategories = [];
+
+  // ----------------------------------------------------------
+  // METHODS
+  // ----------------------------------------------------------
+  @override
+  void initState() {
+    super.initState();
+
+    _listCategories.add(
+        CategoryEntity(idCategory: 1, description: "colar", enabled: true));
+  }
 
   double _boxWidth(double _screenWidth) {
     double loginBoxWidth = _screenWidth;
@@ -24,6 +40,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   void _search() {}
 
+  void refreshComponent() {
+    setState(() {
+      _listCategories;
+    });
+  }
+
+  // ----------------------------------------------------------
+  // BUILD
+  // ----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     double _screenWidth = MediaQuery.of(context).size.width;
@@ -37,7 +62,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
               elevation: 4,
               child: Padding(
                 padding: const EdgeInsets.all(20),
-                child: Row(
+                child: Flex(
+                  direction: Axis.horizontal,
                   children: [
                     Expanded(
                       flex: 2,
@@ -100,6 +126,40 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 ),
               ),
             ),
+            const SizedBox(
+              height: 50,
+            ),
+            PaginatedDataTable(
+              rowsPerPage: 5,
+              showFirstLastButtons: true,
+              showCheckboxColumn: true,
+              checkboxHorizontalMargin: 20,
+              columns: const <DataColumn>[
+                DataColumn(
+                  label: Text(
+                    'Código          ',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Descrição                                                                 ',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                DataColumn(
+                  label: Text(
+                    'Habilitado',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+              source:
+                  CategoryDataTableSource(_listCategories, refreshComponent),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
           ],
         ),
       ),
@@ -107,6 +167,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 }
 
+// ----------------------------------------------------------
+// AUXILIAR CLASS
+// ----------------------------------------------------------
 class CategoryDataTableSource extends DataTableSource {
   List<CategoryEntity> _listCategories;
   void Function() refreshComponent;

@@ -335,6 +335,7 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
                       controller: _name,
                       keyboardType: TextInputType.text,
                       enabled: true,
+                      textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(
                         hintText: "",
                         labelText: "Nome",
