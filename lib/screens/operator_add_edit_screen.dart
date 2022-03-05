@@ -14,6 +14,8 @@ import 'package:sys_ivy_frontend/entity/operator_entity.dart';
 import 'package:sys_ivy_frontend/utils/functions.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
+// TODO Refactor the class
+
 class OperatorAddEdit extends StatefulWidget {
   final Object? args;
   const OperatorAddEdit(this.args, {Key? key}) : super(key: key);
@@ -129,9 +131,6 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
       isValidForm = false;
     }
 
-    /**
-     * only when 
-     */
     if (isCreate()) {
       // PASSWORD
       if (_password.text.isEmpty) {
@@ -226,6 +225,8 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
   }
 
   Widget _hasImage() {
+// TODO FIX the image upload
+
     if (_imageTEMP != null && _imageTEMP!.isNotEmpty) {
       // Upload
       return Image.memory(_imageTEMP!);

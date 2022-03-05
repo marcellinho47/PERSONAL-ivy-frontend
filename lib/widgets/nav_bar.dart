@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
+// TODO refactor the class
+
 class NavBar extends StatefulWidget {
   const NavBar({Key? key}) : super(key: key);
 
@@ -16,6 +18,8 @@ class _NavBarState extends State<NavBar> {
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool hasUserPhoto() {
+// TODO fix photo
+
     if (_auth.currentUser != null && _auth.currentUser!.photoURL != null) {
       return true;
     }
@@ -51,7 +55,8 @@ class _NavBarState extends State<NavBar> {
                 child: hasUserPhoto()
                     ? Image(
                         image: CachedNetworkImageProvider(
-                            _auth.currentUser!.photoURL!),
+                          _auth.currentUser!.photoURL!,
+                        ),
                       )
                     : const Icon(
                         Icons.person_outline_rounded,

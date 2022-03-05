@@ -10,4 +10,6 @@ class AdressEntity {
   String? complement;
   String? district;
   int? zipCode;
+
+  // TODO
 }

@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/entity/category_entity.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -14,6 +16,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   // ----------------------------------------------------------
   TextEditingController _id = TextEditingController();
   TextEditingController _description = TextEditingController();
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<CategoryEntity> _listCategories = [];
 
@@ -24,8 +27,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void initState() {
     super.initState();
 
-    _listCategories.add(
-        CategoryEntity(idCategory: 1, description: "colar", enabled: true));
+    // _listCategories.add(
+    //     CategoryEntity(idCategory: 1, description: "colar", enabled: true));
   }
 
   double _boxWidth(double _screenWidth) {
@@ -38,12 +41,68 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return loginBoxWidth;
   }
 
-  void _search() {}
+  void _search() async {
+    cleanList();
+
+    DocumentReference? doc;
+    QuerySnapshot? snapshot;
+
+    if (_id.text.isNotEmpty) {
+      // FILTERING BY ID
+      doc = _firestore.collection(DaoConfig.CATEGORY_COLLECTION).doc(_id.text);
+    } else if (_description.text.isNotEmpty) {
+      // FILTERING BY DESC
+      snapshot = await _firestore
+          .collection(DaoConfig.CATEGORY_COLLECTION)
+// TODO implements LIKE search
+
+          .where("description", isEqualTo: _description.text)
+          .get();
+    } else {
+      // ALL
+      CollectionReference catRef =
+          _firestore.collection(DaoConfig.CATEGORY_COLLECTION);
+      snapshot = await catRef.get();
+    }
+
+    // Return
+    if (doc != null) {
+      DocumentSnapshot snapshot = await doc.get();
+
+      if (snapshot.exists) {
+        setState(() {
+          _listCategories.add(CategoryEntity.fromDocument(snapshot));
+        });
+      }
+    } else if (snapshot != null && snapshot.docs.isNotEmpty) {
+      for (DocumentSnapshot item in snapshot.docs) {
+        setState(() {
+          _listCategories.add(CategoryEntity.fromDocument(item));
+        });
+      }
+    }
+  }
+
+  void cleanList() {
+    _listCategories = [];
+  }
 
   void refreshComponent() {
     setState(() {
       _listCategories;
     });
+  }
+
+  void _addCategory() {
+    // TODO
+  }
+
+  void _editCategory() {
+    // TODO
+  }
+
+  void _deleteCategory() {
+    // TODO
   }
 
   // ----------------------------------------------------------
@@ -69,7 +128,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       flex: 2,
                       child: TextField(
                         controller: _id,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.number,
                         enabled: true,
                         decoration: const InputDecoration(
                           hintText: "",
@@ -129,36 +188,120 @@ class _CategoryScreenState extends State<CategoryScreen> {
             const SizedBox(
               height: 50,
             ),
-            PaginatedDataTable(
-              rowsPerPage: 5,
-              showFirstLastButtons: true,
-              showCheckboxColumn: true,
-              checkboxHorizontalMargin: 20,
-              columns: const <DataColumn>[
-                DataColumn(
-                  label: Text(
-                    'Código          ',
-                    textAlign: TextAlign.center,
+            Visibility(
+              visible: _listCategories.isNotEmpty,
+              child: Column(
+                children: [
+                  PaginatedDataTable(
+                    rowsPerPage: 5,
+                    showFirstLastButtons: true,
+                    showCheckboxColumn: true,
+                    checkboxHorizontalMargin: 20,
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text(
+                          'Código',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Descrição',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Habilitado',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                    source: CategoryDataTableSource(
+                        _listCategories, refreshComponent),
                   ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'Descrição                                                                 ',
-                    textAlign: TextAlign.center,
+                  const SizedBox(
+                    height: 50,
                   ),
-                ),
-                DataColumn(
-                  label: Text(
-                    'Habilitado',
-                    textAlign: TextAlign.center,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          _addCategory();
+                        },
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.all(20)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: const [
+                            Text("Adicionar"),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Icon(
+                              Icons.add_circle_outline_rounded,
+                              size: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          _editCategory();
+                        },
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.all(20)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: const [
+                            Text("Editar"),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Icon(
+                              Icons.mode_edit_outline_rounded,
+                              size: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          _deleteCategory();
+                        },
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                              const EdgeInsets.all(20)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: const [
+                            Text("Excluir"),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Icon(
+                              Icons.delete_outline_rounded,
+                              size: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-              source:
-                  CategoryDataTableSource(_listCategories, refreshComponent),
-            ),
-            const SizedBox(
-              height: 50,
+                ],
+              ),
             ),
           ],
         ),
@@ -186,10 +329,16 @@ class CategoryDataTableSource extends DataTableSource {
       index: index,
       cells: <DataCell>[
         DataCell(
-          Text(_listCategories[index].idCategory.toString()),
+          SizedBox(
+            width: 70,
+            child: Text(_listCategories[index].idCategory.toString()),
+          ),
         ),
         DataCell(
-          Text(_listCategories[index].description ?? ""),
+          SizedBox(
+            width: 320,
+            child: Text(_listCategories[index].description ?? ""),
+          ),
         ),
         DataCell(_listCategories[index].enabled!
             ? const Icon(Icons.check_circle_outline_rounded)

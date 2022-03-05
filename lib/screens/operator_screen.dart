@@ -182,7 +182,7 @@ class _OperatorState extends State<Operator> {
                         width: 5,
                       ),
                       Icon(
-                        Icons.person_add_alt_rounded,
+                        Icons.add_circle_outline_rounded,
                         size: 15,
                       ),
                     ],
