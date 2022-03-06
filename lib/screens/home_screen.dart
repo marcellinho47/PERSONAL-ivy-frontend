@@ -1,24 +1,36 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 import 'package:sys_ivy_frontend/widgets/nav_bar.dart';
 
-class Home extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   final Widget? widgetBody;
   final String screenName;
 
-  const Home(this.widgetBody, this.screenName, {Key? key}) : super(key: key);
+  const HomeScreen(
+    this.widgetBody,
+    this.screenName, {
+    Key? key,
+  }) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeScreenState extends State<HomeScreen> {
+  // ----------------------------------------------------------
+  // VARIABLES
+  // ----------------------------------------------------------
   FirebaseAuth _auth = FirebaseAuth.instance;
   Widget? _widgetBody;
   late String _screenName;
 
+  // ----------------------------------------------------------
+  // METHODS
+  // ----------------------------------------------------------
   void _checkOperatorLogin() async {
 // TODO remove operator excluded
 
@@ -37,6 +49,9 @@ class _HomeState extends State<Home> {
     _checkOperatorLogin();
   }
 
+  // ----------------------------------------------------------
+  // BUILD
+  // ----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(

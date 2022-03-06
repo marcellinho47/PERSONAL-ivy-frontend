@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
@@ -7,19 +9,25 @@ import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 // TODO refactor the class
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginState createState() => _LoginState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginScreenState extends State<LoginScreen> {
+  // ----------------------------------------------------------
+  // VARIABLES
+  // ----------------------------------------------------------
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   StringBuffer _toastMsg = StringBuffer("");
   FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // ----------------------------------------------------------
+  // METHODS
+  // ----------------------------------------------------------
   @override
   void initState() {
     super.initState();
@@ -87,6 +95,9 @@ class _LoginState extends State<Login> {
     return loginBoxWidth;
   }
 
+  // ----------------------------------------------------------
+  // BUILD
+  // ----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     double _screenHeight = MediaQuery.of(context).size.height;

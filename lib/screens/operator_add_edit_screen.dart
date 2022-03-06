@@ -18,15 +18,18 @@ import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 // TODO Refactor the class
 
-class OperatorAddEdit extends StatefulWidget {
+class OperatorAddEditScreen extends StatefulWidget {
   final Object? args;
-  const OperatorAddEdit(this.args, {Key? key}) : super(key: key);
+  const OperatorAddEditScreen(
+    this.args, {
+    Key? key,
+  }) : super(key: key);
 
   @override
-  _OperatorAddEditState createState() => _OperatorAddEditState();
+  _OperatorAddEditScreenState createState() => _OperatorAddEditScreenState();
 }
 
-class _OperatorAddEditState extends State<OperatorAddEdit> {
+class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
   // ----------------------------------------------------------
   // VARIABLES
   // ----------------------------------------------------------
@@ -181,6 +184,8 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
     _setFormToEntity();
 
     if (op!.idOperator == null || op!.idOperator!.isEmpty) {
+      // TODO valid if there is another user with this email
+
       // CREATE ----------------------
 
       // Firebase Auth User

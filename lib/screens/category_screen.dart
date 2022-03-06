@@ -3,7 +3,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/firestore_config.dart';
+import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/entity/category_entity.dart';
+import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({Key? key}) : super(key: key);
@@ -107,15 +109,35 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _addCategory() {
-    // TODO
+    Navigator.pushReplacementNamed(context, Routes.CATEGORIES_ADD_EDIT_ROUTE);
   }
 
   void _editCategory() {
-    // TODO
+    if (_countSelectCategories() != 1) {
+      showWarningToast(context, "Selecione apenas 1 registro para alteração.");
+      return;
+    }
+
+    Navigator.pushReplacementNamed(
+      context,
+      Routes.CATEGORIES_ADD_EDIT_ROUTE,
+      arguments:
+          _listCategories.where((element) => element.isSelect).first.idCategory,
+    );
   }
 
   void _deleteCategory() {
-    // TODO
+    if (_countSelectCategories() != 1) {
+      showWarningToast(context, "Selecione ao menos 1 registro para exclusão.");
+      return;
+    }
+
+    // TODO create method that valids if there product associated to a category = disabled
+    // else delete
+  }
+
+  int _countSelectCategories() {
+    return _listCategories.where((element) => element.isSelect).length;
   }
 
   // ----------------------------------------------------------
