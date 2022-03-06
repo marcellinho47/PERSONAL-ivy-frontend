@@ -2,5 +2,12 @@ class PurchaseInstallmentsEntity {
   int? idPurchaseInstallments;
   int? installments;
   double? value;
-  bool isPaid = false;
+  bool isPaid;
+
+  PurchaseInstallmentsEntity({
+    this.idPurchaseInstallments,
+    this.installments,
+    this.value,
+    this.isPaid = false,
+  });
 }

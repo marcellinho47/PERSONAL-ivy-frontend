@@ -11,4 +11,16 @@ class PersonEntity {
   DateTime? birthday;
   List<ContactEntity?>? listConcact;
   List<PersonAdressEntity?>? listPersonAdress;
+
+  PersonEntity({
+    this.idPerson,
+    this.name,
+    this.personType,
+    this.cpf,
+    this.cnpj,
+    this.sex,
+    this.birthday,
+    this.listConcact,
+    this.listPersonAdress,
+  });
 }

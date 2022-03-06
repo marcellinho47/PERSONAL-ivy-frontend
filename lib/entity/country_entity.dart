@@ -4,7 +4,10 @@ class CountryEntity {
   int? idCountry;
   String? name;
 
-  CountryEntity({this.idCountry, this.name});
+  CountryEntity({
+    this.idCountry,
+    this.name,
+  });
 
   factory CountryEntity.fromDocument(DocumentSnapshot doc) {
     return CountryEntity(idCountry: int.parse(doc.id), name: doc.get("name"));

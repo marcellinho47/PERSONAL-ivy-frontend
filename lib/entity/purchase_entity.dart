@@ -19,4 +19,22 @@ class Purchase {
   List<PurchaseAdressEntity?>? listPurchaseAdress;
   List<PurchaseProductsEntity?>? listPurchaseProducts;
   List<PurchasePaymentTypeEntity?>? listPurchasePaymentType;
+
+  Purchase({
+    this.idPurchase,
+    this.store,
+    this.site,
+    this.purchaseDate,
+    this.expectedDeliveryDate,
+    this.deliveryDate,
+    this.trackingCode,
+    this.deliveryType,
+    this.totalValue,
+    this.discountValue,
+    this.freightValue,
+    this.note,
+    this.listPurchaseAdress,
+    this.listPurchaseProducts,
+    this.listPurchasePaymentType,
+  });
 }

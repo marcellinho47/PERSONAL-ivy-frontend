@@ -8,4 +8,13 @@ class PurchasePaymentTypeEntity {
   double? paidValue;
   int? totalInstallments;
   List<PurchaseInstallmentsEntity?>? listPurchaseInstallments;
+
+  PurchasePaymentTypeEntity({
+    this.idPurchasePaymentType,
+    this.paymentType,
+    this.totalValue,
+    this.paidValue,
+    this.totalInstallments,
+    this.listPurchaseInstallments,
+  });
 }

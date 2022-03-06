@@ -6,4 +6,12 @@ class SaleProductsEntity {
   int? quantity;
   double? unitaryValue;
   double? discountValue;
+
+  SaleProductsEntity({
+    this.idSaleProducts,
+    this.product,
+    this.quantity,
+    this.unitaryValue,
+    this.discountValue,
+  });
 }

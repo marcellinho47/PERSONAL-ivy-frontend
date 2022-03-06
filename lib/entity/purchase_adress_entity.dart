@@ -5,4 +5,10 @@ class PurchaseAdressEntity {
   int? idPurchaseAdress;
   AdressEntity? adress;
   AdressTypeEntity? adressType;
+
+  PurchaseAdressEntity({
+    this.idPurchaseAdress,
+    this.adress,
+    this.adressType,
+  });
 }

@@ -4,7 +4,10 @@ class DeliveryTypeEntity {
   int? idDeliveryType;
   String? description;
 
-  DeliveryTypeEntity({this.idDeliveryType, this.description});
+  DeliveryTypeEntity({
+    this.idDeliveryType,
+    this.description,
+  });
 
   factory DeliveryTypeEntity.fromDocument(DocumentSnapshot doc) {
     return DeliveryTypeEntity(

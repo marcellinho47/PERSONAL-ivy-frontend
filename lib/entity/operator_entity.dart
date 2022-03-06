@@ -13,18 +13,19 @@ class OperatorEntity {
   String? imageURL;
   bool isSelect = false;
 
-  OperatorEntity(
-      {this.idOperator,
-      this.name,
-      this.login,
-      this.password,
-      this.isAdmin,
-      this.isSelect = false,
-      this.imageURL,
-      this.idOperatorInclusion,
-      this.inclusionDate,
-      this.idOperatorExclusion,
-      this.exclusionDate});
+  OperatorEntity({
+    this.idOperator,
+    this.name,
+    this.login,
+    this.password,
+    this.isAdmin,
+    this.isSelect = false,
+    this.imageURL,
+    this.idOperatorInclusion,
+    this.inclusionDate,
+    this.idOperatorExclusion,
+    this.exclusionDate,
+  });
 
   factory OperatorEntity.fromDocument(DocumentSnapshot doc) {
     return OperatorEntity(

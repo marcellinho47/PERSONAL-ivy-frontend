@@ -4,4 +4,10 @@ class StateEntity {
   int? idState;
   CountryEntity? country;
   String? name;
+
+  StateEntity({
+    this.idState,
+    this.country,
+    this.name,
+  });
 }

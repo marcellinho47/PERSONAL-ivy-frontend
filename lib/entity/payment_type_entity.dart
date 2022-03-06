@@ -4,7 +4,10 @@ class PaymentTypeEntity {
   int? idPaymentType;
   String? description;
 
-  PaymentTypeEntity({this.idPaymentType, this.description});
+  PaymentTypeEntity({
+    this.idPaymentType,
+    this.description,
+  });
 
   factory PaymentTypeEntity.fromDocument(DocumentSnapshot doc) {
     return PaymentTypeEntity(

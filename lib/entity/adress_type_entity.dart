@@ -4,7 +4,10 @@ class AdressTypeEntity {
   int? idAdressTypeEntity;
   String? description;
 
-  AdressTypeEntity({this.idAdressTypeEntity, this.description});
+  AdressTypeEntity({
+    this.idAdressTypeEntity,
+    this.description,
+  });
 
   factory AdressTypeEntity.fromDocument(DocumentSnapshot doc) {
     return AdressTypeEntity(

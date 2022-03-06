@@ -8,4 +8,13 @@ class SalePaymentTypeEntity {
   double? paidValue;
   int? totalInstallments;
   List<SaleInstallmentsEntity?>? listSaleInstallments;
+
+  SalePaymentTypeEntity({
+    this.idSalePaymentType,
+    this.paymentType,
+    this.totalValue,
+    this.paidValue,
+    this.totalInstallments,
+    this.listSaleInstallments,
+  });
 }

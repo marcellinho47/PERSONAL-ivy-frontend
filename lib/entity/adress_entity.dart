@@ -12,15 +12,16 @@ class AdressEntity {
   String? district;
   int? zipCode;
 
-  AdressEntity(
-      {this.idAdress,
-      this.city,
-      this.streetType,
-      this.street,
-      this.number,
-      this.complement,
-      this.district,
-      this.zipCode});
+  AdressEntity({
+    this.idAdress,
+    this.city,
+    this.streetType,
+    this.street,
+    this.number,
+    this.complement,
+    this.district,
+    this.zipCode,
+  });
 
   factory AdressEntity.fromDocument(DocumentSnapshot doc) {
     return AdressEntity(

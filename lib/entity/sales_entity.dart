@@ -21,4 +21,23 @@ class SaleEntity {
   List<SaleProductsEntity?>? listSaleProducts;
   List<SalePaymentTypeEntity?>? listSalePaymentType;
   List<SaleAdressEntity?>? listSaleAdress;
+
+  SaleEntity({
+    this.idSaleEntity,
+    this.clientPerson,
+    this.saleDate,
+    this.expectedDeliveryDate,
+    this.deliveryDate,
+    this.trackingCode,
+    this.deliveryType,
+    this.warrantyDays,
+    this.productsValue,
+    this.totalValue,
+    this.freightValue,
+    this.discountValue,
+    this.note,
+    this.listSaleProducts,
+    this.listSalePaymentType,
+    this.listSaleAdress,
+  });
 }

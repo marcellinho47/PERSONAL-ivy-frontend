@@ -4,7 +4,10 @@ class ContactTypeEntity {
   int? idContactType;
   String? description;
 
-  ContactTypeEntity({this.idContactType, this.description});
+  ContactTypeEntity({
+    this.idContactType,
+    this.description,
+  });
 
   factory ContactTypeEntity.fromDocument(DocumentSnapshot doc) {
     return ContactTypeEntity(

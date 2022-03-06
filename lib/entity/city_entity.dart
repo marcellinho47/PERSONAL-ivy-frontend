@@ -7,7 +7,12 @@ class CityEntity {
   String? name;
   StateEntity? state;
 
-  CityEntity({this.idCity, this.idIBGE, this.name, this.state});
+  CityEntity({
+    this.idCity,
+    this.idIBGE,
+    this.name,
+    this.state,
+  });
 
   factory CityEntity.fromDocument(DocumentSnapshot doc) {
     return CityEntity(

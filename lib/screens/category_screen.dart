@@ -52,14 +52,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
     if (_id.text.isNotEmpty) {
       // FILTERING BY ID
       doc = _firestore.collection(DaoConfig.CATEGORY_COLLECTION).doc(_id.text);
-    } else if (_description.text.isNotEmpty) {
-      // FILTERING BY DESC
-      snapshot = await _firestore
-          .collection(DaoConfig.CATEGORY_COLLECTION)
-// TODO implements LIKE search
-
-          .where("description", isEqualTo: _description.text)
-          .get();
     } else {
       // ALL
       CollectionReference catRef =
@@ -69,6 +61,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     // Return
     if (doc != null) {
+      //BY ID
       DocumentSnapshot snapshot = await doc.get();
 
       if (snapshot.exists) {
@@ -77,10 +70,28 @@ class _CategoryScreenState extends State<CategoryScreen> {
         });
       }
     } else if (snapshot != null && snapshot.docs.isNotEmpty) {
-      for (DocumentSnapshot item in snapshot.docs) {
-        setState(() {
-          _listCategories.add(CategoryEntity.fromDocument(item));
-        });
+      if (_description.text.isNotEmpty) {
+        // BY TEXT
+
+        for (DocumentSnapshot item in snapshot.docs) {
+          CategoryEntity temp = CategoryEntity.fromDocument(item);
+
+          if (temp.description!
+              .toLowerCase()
+              .trim()
+              .contains(_description.text.trim().toLowerCase())) {
+            setState(() {
+              _listCategories.add(temp);
+            });
+          }
+        }
+      } else {
+        // ALL
+        for (DocumentSnapshot item in snapshot.docs) {
+          setState(() {
+            _listCategories.add(CategoryEntity.fromDocument(item));
+          });
+        }
       }
     }
   }

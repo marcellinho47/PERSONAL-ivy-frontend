@@ -6,8 +6,12 @@ class CategoryEntity {
   bool? enabled;
   bool isSelect;
 
-  CategoryEntity(
-      {this.idCategory, this.description, this.enabled, this.isSelect = false});
+  CategoryEntity({
+    this.idCategory,
+    this.description,
+    this.enabled,
+    this.isSelect = false,
+  });
 
   factory CategoryEntity.fromDocument(DocumentSnapshot doc) {
     return CategoryEntity(
