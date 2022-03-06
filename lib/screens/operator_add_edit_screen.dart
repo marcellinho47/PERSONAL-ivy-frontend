@@ -107,11 +107,11 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
   }
 
   void _setFormToEntity() {
-    op!.idOperator = _uid.text;
-    op!.login = _email.text;
-    op!.password = _password.text;
-    op!.name = _name.text;
-    op!.imageURL = _imageURL;
+    op!.idOperator = _uid.text.trim();
+    op!.login = _email.text.trim();
+    op!.password = _password.text.trim();
+    op!.name = _name.text.trim();
+    op!.imageURL = _imageURL != null ? _imageURL!.trim() : "";
 
     if (dropdownRoleValue == Roles.ROLE_ADMIN) {
       op!.isAdmin = true;
