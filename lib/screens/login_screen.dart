@@ -118,7 +118,7 @@ class _LoginState extends State<Login> {
                         Radius.circular(10),
                       ),
                     ),
-                    child: Container(
+                    child: SizedBox(
                       height: 350,
                       width: loginBoxWidth(_screenWidth),
                       child: Padding(
@@ -154,7 +154,7 @@ class _LoginState extends State<Login> {
                             const SizedBox(
                               height: 30,
                             ),
-                            Container(
+                            SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () {

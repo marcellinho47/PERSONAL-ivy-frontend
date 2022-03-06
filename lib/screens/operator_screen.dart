@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +34,6 @@ class _OperatorState extends State<Operator> {
   }
 
   void _listAllOperators() async {
-    // TODO remove exclusion operator
     _listOperators = [];
 
     CollectionReference operatorRef =
@@ -42,9 +43,12 @@ class _OperatorState extends State<Operator> {
 
     for (DocumentSnapshot item in snapshot.docs) {
       OperatorEntity op = OperatorEntity.fromDocument(item);
-      setState(() {
-        _listOperators.add(op);
-      });
+
+      if (Timestamp.fromMillisecondsSinceEpoch(1) == op.exclusionDate!) {
+        setState(() {
+          _listOperators.add(op);
+        });
+      }
     }
   }
 
@@ -65,20 +69,31 @@ class _OperatorState extends State<Operator> {
   }
 
   void _addOperator() {
-    OperatorEntity op = _listOperators
-        .where((element) => element.idOperator == _auth.currentUser!.uid)
-        .toList()
-        .first;
-    if (op.isAdmin != null && !op.isAdmin!) {
-      showWarningToast(context, "Usuário sem permissão para cadastro.");
+    if (!_isAdmin()) {
+      showWarningToast(context, "Usuário sem permissão!");
+      return;
     }
 
     Navigator.pushReplacementNamed(context, Routes.OPERATOR_ADD_EDIT_ROUTE);
   }
 
+  bool _isAdmin() {
+    OperatorEntity op = _listOperators
+        .where((element) => element.idOperator == _auth.currentUser!.uid)
+        .toList()
+        .first;
+
+    if (op.isAdmin == null) {
+      return false;
+    }
+
+    return op.isAdmin!;
+  }
+
   void _editOperator() {
     if (_countSelectOperators() != 1) {
       showWarningToast(context, "Para a edição escolha 1 registro!");
+      return;
     } else {
       OperatorEntity op =
           _listOperators.where((element) => element.isSelect).toList().first;
@@ -96,8 +111,12 @@ class _OperatorState extends State<Operator> {
   Future<void> _deleteOperator() async {
     if (_countSelectOperators() < 1) {
       showWarningToast(context, "Para a exlusão escolha ao menos 1 registro!");
+      return;
+    } else if (!_isAdmin()) {
+      showWarningToast(context, "Usuário sem permissão!");
+      return;
     } else {
-      // TODO - ADD CONFIRMATION
+// TODO ADD CONFIRMATION
 
       // execute delete
       List<OperatorEntity> list =
@@ -131,7 +150,7 @@ class _OperatorState extends State<Operator> {
     double _screenWidth = MediaQuery.of(context).size.width;
 
     return Center(
-      child: Container(
+      child: SizedBox(
         width: _boxWidth(_screenWidth),
         child: Column(
           children: [

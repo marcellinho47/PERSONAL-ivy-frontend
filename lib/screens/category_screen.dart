@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/firestore_config.dart';
@@ -113,7 +115,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     double _screenWidth = MediaQuery.of(context).size.width;
 
     return Center(
-      child: Container(
+      child: SizedBox(
         width: _boxWidth(_screenWidth),
         child: Column(
           children: [

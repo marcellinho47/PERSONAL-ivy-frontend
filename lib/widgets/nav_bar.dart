@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +16,15 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  final double _elevation = 2;
+  // ----------------------------------------------------------
+  // VARIABLES
+  // ----------------------------------------------------------
+  static const double _elevation = 2;
   FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // ----------------------------------------------------------
+  // METHODS
+  // ----------------------------------------------------------
   bool hasUserPhoto() {
 // TODO fix photo
 
@@ -31,6 +39,9 @@ class _NavBarState extends State<NavBar> {
     super.initState();
   }
 
+  // ----------------------------------------------------------
+  // BUILD
+  // ----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Drawer(

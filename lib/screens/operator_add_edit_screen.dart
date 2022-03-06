@@ -1,3 +1,5 @@
+// ignore_for_file: sized_box_for_whitespace, prefer_final_fields
+
 import 'dart:async';
 import 'dart:typed_data';
 
@@ -25,6 +27,9 @@ class OperatorAddEdit extends StatefulWidget {
 }
 
 class _OperatorAddEditState extends State<OperatorAddEdit> {
+  // ----------------------------------------------------------
+  // VARIABLES
+  // ----------------------------------------------------------
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseStorage _storage = FirebaseStorage.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -43,6 +48,9 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
   String? dropdownRoleValue;
   OperatorEntity? op;
 
+  // ----------------------------------------------------------
+  // METHODS
+  // ----------------------------------------------------------
   double _boxWidth(double _screenWidth) {
     double loginBoxWidth = _screenWidth;
 
@@ -292,6 +300,9 @@ class _OperatorAddEditState extends State<OperatorAddEdit> {
     return _uid.text.isEmpty;
   }
 
+  // ----------------------------------------------------------
+  // BUILD
+  // ----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     double _screenWidth = MediaQuery.of(context).size.width;
