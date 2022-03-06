@@ -5,4 +5,6 @@ class PersonAdressEntity {
   int? idPersonAdress;
   AdressEntity? adress;
   AdressTypeEntity? adressType;
+
+  
 }
