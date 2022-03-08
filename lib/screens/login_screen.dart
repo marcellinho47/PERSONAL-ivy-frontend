@@ -35,6 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void resetFields() {
+    // TODO remove when goes to production
+
     _toastMsg = StringBuffer("");
     _emailController.text = "marcello_doalves@hotmail.com";
     _passwordController.text = "soumaisbulcao";
@@ -105,11 +107,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       body: Container(
-        // color: ColorPallete.backgroudSystem,
         color: ColorPallete.backgroudSystem,
         height: _screenHeight,
         width: _screenWidth,
-
         child: Stack(
           children: [
             Positioned(

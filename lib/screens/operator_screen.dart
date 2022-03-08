@@ -116,7 +116,7 @@ class _OperatorState extends State<Operator> {
       showWarningToast(context, "Usuário sem permissão!");
       return;
     } else {
-// TODO ADD CONFIRMATION
+      // TODO ADD CONFIRMATION
 
       // execute delete
       List<OperatorEntity> list =

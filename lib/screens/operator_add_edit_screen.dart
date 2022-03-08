@@ -16,8 +16,6 @@ import 'package:sys_ivy_frontend/entity/operator_entity.dart';
 import 'package:sys_ivy_frontend/utils/functions.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
-// TODO Refactor the class
-
 class OperatorAddEditScreen extends StatefulWidget {
   final Object? args;
   const OperatorAddEditScreen(
@@ -173,6 +171,8 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
       }
     }
 
+    // TODO valid if there is another user with this email
+
     if (isValidForm) {
       _createUpdateOperator();
     } else {
@@ -184,8 +184,6 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
     _setFormToEntity();
 
     if (op!.idOperator == null || op!.idOperator!.isEmpty) {
-      // TODO valid if there is another user with this email
-
       // CREATE ----------------------
 
       // Firebase Auth User
@@ -238,11 +236,20 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
   }
 
   Widget _hasImage() {
-// TODO FIX the image upload
+    // TODO FIX the image upload
 
     if (_imageTEMP != null && _imageTEMP!.isNotEmpty) {
       // Upload
-      return Image.memory(_imageTEMP!);
+
+      return CircleAvatar(
+        radius: 45,
+        child: ClipOval(
+          child: Image.memory(
+            _imageTEMP!,
+            filterQuality: FilterQuality.high,
+          ),
+        ),
+      );
     } else if (_imageURL != null && _imageURL!.isNotEmpty) {
       // Cloud
 
@@ -251,8 +258,6 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
         child: ClipOval(
           child: Image(
             image: CachedNetworkImageProvider(_imageURL!),
-            //      width: 400,
-            //    height: 400,
           ),
         ),
       );

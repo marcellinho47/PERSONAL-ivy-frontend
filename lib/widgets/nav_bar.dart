@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
-// TODO refactor the class
-
 class NavBar extends StatefulWidget {
   const NavBar({Key? key}) : super(key: key);
 
