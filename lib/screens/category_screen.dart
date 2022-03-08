@@ -30,9 +30,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   void initState() {
     super.initState();
-
-    // _listCategories.add(
-    //     CategoryEntity(idCategory: 1, description: "colar", enabled: true));
   }
 
   double _boxWidth(double _screenWidth) {
