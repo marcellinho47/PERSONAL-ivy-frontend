@@ -3,18 +3,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/firestore_config.dart';
-import 'package:sys_ivy_frontend/config/routes_config.dart';
-import 'package:sys_ivy_frontend/entity/category_entity.dart';
+import 'package:sys_ivy_frontend/entity/product_entity.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
-class CategoryScreen extends StatefulWidget {
-  const CategoryScreen({Key? key}) : super(key: key);
+class ProductScreen extends StatefulWidget {
+  const ProductScreen({Key? key}) : super(key: key);
 
   @override
-  _CategoryScreenState createState() => _CategoryScreenState();
+  State<ProductScreen> createState() => _ProductScreenState();
 }
 
-class _CategoryScreenState extends State<CategoryScreen> {
+class _ProductScreenState extends State<ProductScreen> {
   // ----------------------------------------------------------
   // VARIABLES
   // ----------------------------------------------------------
@@ -22,7 +21,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   TextEditingController _description = TextEditingController();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  List<CategoryEntity> _listCategories = [];
+  List<ProductEntity> _listProduct = [];
 
   // ----------------------------------------------------------
   // METHODS
@@ -42,19 +41,23 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return loginBoxWidth;
   }
 
+  void _cleanList() {
+    _listProduct = [];
+  }
+
   void _search() async {
-    cleanList();
+    _cleanList();
 
     DocumentReference? doc;
     QuerySnapshot? snapshot;
 
     if (_id.text.isNotEmpty) {
       // FILTERING BY ID
-      doc = _firestore.collection(DaoConfig.CATEGORY_COLLECTION).doc(_id.text);
+      doc = _firestore.collection(DaoConfig.PRODUCT_COLLECTION).doc(_id.text);
     } else {
       // ALL
       CollectionReference catRef =
-          _firestore.collection(DaoConfig.CATEGORY_COLLECTION);
+          _firestore.collection(DaoConfig.PRODUCT_COLLECTION);
       snapshot = await catRef.get();
     }
 
@@ -65,7 +68,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
       if (snapshot.exists) {
         setState(() {
-          _listCategories.add(CategoryEntity.fromDocument(snapshot));
+          _listProduct.add(ProductEntity.fromDocument(snapshot));
         });
       }
     } else if (snapshot != null && snapshot.docs.isNotEmpty) {
@@ -73,14 +76,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
         // BY TEXT
 
         for (DocumentSnapshot item in snapshot.docs) {
-          CategoryEntity temp = CategoryEntity.fromDocument(item);
+          ProductEntity temp = ProductEntity.fromDocument(item);
 
           if (temp.description!
-              .toLowerCase()
-              .trim()
-              .contains(_description.text.trim().toLowerCase())) {
+                  .toLowerCase()
+                  .trim()
+                  .contains(_description.text.trim().toLowerCase()) ||
+              temp.name!
+                  .toLowerCase()
+                  .trim()
+                  .contains(_description.text.trim().toLowerCase())) {
             setState(() {
-              _listCategories.add(temp);
+              _listProduct.add(temp);
             });
           }
         }
@@ -88,59 +95,29 @@ class _CategoryScreenState extends State<CategoryScreen> {
         // ALL
         for (DocumentSnapshot item in snapshot.docs) {
           setState(() {
-            _listCategories.add(CategoryEntity.fromDocument(item));
+            _listProduct.add(ProductEntity.fromDocument(item));
           });
         }
       }
     }
 
-    if (_listCategories.isEmpty) {
+    if (_listProduct.isEmpty) {
       showSuccessToast(context,
           "Não foram encontrados registros para os parâmetros informados.");
     }
   }
 
-  void cleanList() {
-    _listCategories = [];
-  }
-
   void refreshComponent() {
     setState(() {
-      _listCategories;
+      _listProduct;
     });
   }
 
-  void _addCategory() {
-    Navigator.pushReplacementNamed(context, Routes.CATEGORIES_ADD_EDIT_ROUTE);
-  }
+  void _addProduct() {}
 
-  void _editCategory() {
-    if (_countSelectCategories() != 1) {
-      showWarningToast(context, "Selecione apenas 1 registro para alteração.");
-      return;
-    }
+  void _editProduct() {}
 
-    Navigator.pushReplacementNamed(
-      context,
-      Routes.CATEGORIES_ADD_EDIT_ROUTE,
-      arguments:
-          _listCategories.where((element) => element.isSelect).first.idCategory,
-    );
-  }
-
-  void _deleteCategory() {
-    if (_countSelectCategories() != 1) {
-      showWarningToast(context, "Selecione ao menos 1 registro para exclusão.");
-      return;
-    }
-
-    // TODO create method that valids if there product associated to a category = disabled
-    // else delete
-  }
-
-  int _countSelectCategories() {
-    return _listCategories.where((element) => element.isSelect).length;
-  }
+  void _deleteProduct() {}
 
   // ----------------------------------------------------------
   // BUILD
@@ -157,7 +134,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
             Card(
               elevation: 4,
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20.0),
                 child: Flex(
                   direction: Axis.horizontal,
                   children: [
@@ -226,7 +203,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               height: 50,
             ),
             Visibility(
-              visible: _listCategories.isNotEmpty,
+              visible: _listProduct.isNotEmpty,
               child: Column(
                 children: [
                   PaginatedDataTable(
@@ -254,8 +231,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         ),
                       ),
                     ],
-                    source: CategoryDataTableSource(
-                      _listCategories,
+                    source: ProductDataTableSource(
+                      _listProduct,
                       refreshComponent,
                     ),
                   ),
@@ -267,7 +244,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          _addCategory();
+                          _addProduct();
                         },
                         style: ButtonStyle(
                           padding: MaterialStateProperty.all(
@@ -292,7 +269,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          _editCategory();
+                          _editProduct();
                         },
                         style: ButtonStyle(
                           padding: MaterialStateProperty.all(
@@ -317,7 +294,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          _deleteCategory();
+                          _deleteProduct();
                         },
                         style: ButtonStyle(
                           padding: MaterialStateProperty.all(
@@ -352,11 +329,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
 // ----------------------------------------------------------
 // AUXILIAR CLASS
 // ----------------------------------------------------------
-class CategoryDataTableSource extends DataTableSource {
-  List<CategoryEntity> _listCategories;
+class ProductDataTableSource extends DataTableSource {
+  List<ProductEntity> _listProduct;
   void Function() refreshComponent;
 
-  CategoryDataTableSource(this._listCategories, this.refreshComponent);
+  ProductDataTableSource(
+    this._listProduct,
+    this.refreshComponent,
+  );
 
   @override
   DataRow? getRow(int index) {
@@ -369,39 +349,42 @@ class CategoryDataTableSource extends DataTableSource {
       cells: <DataCell>[
         DataCell(
           SizedBox(
-            width: 70,
-            child: Text(_listCategories[index].idCategory.toString()),
+            width: 80,
+            child: Text(_listProduct[index].idProduct.toString()),
           ),
         ),
         DataCell(
           SizedBox(
-            width: 320,
-            child: Text(_listCategories[index].description ?? ""),
+            width: 80,
+            child: Text(_listProduct[index].name ?? ""),
           ),
         ),
-        DataCell(_listCategories[index].enabled!
-            ? const Icon(Icons.check_circle_outline_rounded)
-            : const Text("")),
+        DataCell(
+          SizedBox(
+            width: 80,
+            child: Text(_listProduct[index].category!.description ?? ""),
+          ),
+        ),
       ],
     );
   }
 
   void selectIndex(int index, bool? isSelect) {
-    _listCategories.elementAt(index).isSelect = isSelect ?? false;
+    _listProduct.elementAt(index).isSelect = isSelect ?? false;
     refreshComponent();
   }
 
   bool isSelect(int index) {
-    return _listCategories.elementAt(index).isSelect;
+    return _listProduct.elementAt(index).isSelect;
   }
 
   @override
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => _listCategories.length;
+  int get rowCount => _listProduct.length;
 
   @override
   int get selectedRowCount =>
-      _listCategories.where((element) => element.isSelect).toList().length;
+      _listProduct.where((element) => element.isSelect).toList().length;
 }

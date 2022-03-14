@@ -9,6 +9,7 @@ import 'package:sys_ivy_frontend/screens/home_screen.dart';
 import 'package:sys_ivy_frontend/screens/login_screen.dart';
 import 'package:sys_ivy_frontend/screens/operator_add_edit_screen.dart';
 import 'package:sys_ivy_frontend/screens/operator_screen.dart';
+import 'package:sys_ivy_frontend/screens/product_screen.dart';
 
 class Routes {
   // ADD NEW ROUTES HERE
@@ -84,7 +85,7 @@ class Routes {
       case PRODUCTS_ROUTE:
         return MaterialPageRoute(
           builder: (_) => const HomeScreen(
-            null,
+            ProductScreen(),
             ScreenName.PRODUCTS_SCREEN,
           ),
         );

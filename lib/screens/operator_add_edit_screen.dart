@@ -236,8 +236,6 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
   }
 
   Widget _hasImage() {
-    // TODO FIX the image upload
-
     if (_imageTEMP != null && _imageTEMP!.isNotEmpty) {
       // Upload
 
@@ -246,6 +244,9 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
         child: ClipOval(
           child: Image.memory(
             _imageTEMP!,
+            scale: 0.5,
+            fit: BoxFit.cover,
+            alignment: FractionalOffset.topCenter,
             filterQuality: FilterQuality.high,
           ),
         ),
@@ -256,8 +257,11 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
       return CircleAvatar(
         radius: 45,
         child: ClipOval(
-          child: Image(
-            image: CachedNetworkImageProvider(_imageURL!),
+          child: Image.network(
+            _imageURL!,
+            fit: BoxFit.fitWidth,
+            alignment: FractionalOffset.topCenter,
+            filterQuality: FilterQuality.high,
           ),
         ),
       );

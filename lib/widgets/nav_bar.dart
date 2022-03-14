@@ -24,8 +24,6 @@ class _NavBarState extends State<NavBar> {
   // METHODS
   // ----------------------------------------------------------
   bool hasUserPhoto() {
-// TODO fix photo
-
     if (_auth.currentUser != null && _auth.currentUser!.photoURL != null) {
       return true;
     }
@@ -62,9 +60,21 @@ class _NavBarState extends State<NavBar> {
               child: ClipOval(
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: hasUserPhoto()
-                    ? Image(
-                        image: CachedNetworkImageProvider(
-                          _auth.currentUser!.photoURL!,
+                    ? AspectRatio(
+                        aspectRatio: 200 / 200,
+                        child: Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.fitWidth,
+                                alignment: FractionalOffset.topCenter,
+                                image: NetworkImage(
+                                  _auth.currentUser!.photoURL!,
+                                  scale: 4,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       )
                     : const Icon(

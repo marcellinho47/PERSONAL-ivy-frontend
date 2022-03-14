@@ -4,7 +4,13 @@ import 'package:flutter/material.dart';
 /* TOAST */
 /* ---------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
-// TODO REFATORAR CODIGOS
+double width = 300;
+
+void showToast(BuildContext context, String warningMsg, int? timeDuration,
+    int? typeToast, double? width) {
+  // TODO FINISH REFACTOR
+  showSuccessToast(context, "");
+}
 
 void showWarningToast(BuildContext context, String warningMsg) {
   dynamic scaffold = ScaffoldMessenger.of(context);
@@ -36,7 +42,6 @@ void showWarningToast(BuildContext context, String warningMsg) {
       backgroundColor: Colors.yellow,
       behavior: SnackBarBehavior.floating,
       width: 240.0,
-
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(25)),
       ),
