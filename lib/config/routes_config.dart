@@ -11,6 +11,8 @@ import 'package:sys_ivy_frontend/screens/operator_add_edit_screen.dart';
 import 'package:sys_ivy_frontend/screens/operator_screen.dart';
 import 'package:sys_ivy_frontend/screens/product_screen.dart';
 
+import '../screens/product_add_edit_screen.dart';
+
 class Routes {
   // ADD NEW ROUTES HERE
   static const String INITAL_ROUTE = "/";
@@ -22,10 +24,13 @@ class Routes {
   static const String CATEGORIES_ROUTE = "/categories";
   static const String CATEGORIES_ADD_EDIT_ROUTE = "/categories/add_edit";
   static const String PRODUCTS_ROUTE = "/products";
+  static const String PRODUCTS_ADD_EDIT_ROUTE = "/products/add_edit";
   static const String STOCK_ROUTE = "/stock";
   static const String OPERATOR_ROUTE = "/operator";
   static const String OPERATOR_ADD_EDIT_ROUTE = "/operator/add_edit";
   static const String LOGOUT_ROUTE = "/logout";
+  static const String CLIENTS_ROUTE = "/clients";
+  static const String CLIENTS_ADD_EDIT_ROUTE = "/clients/add_edit";
 
   // NAVIGATION
   static Route<dynamic> createRoute(RouteSettings settings) {
@@ -87,6 +92,13 @@ class Routes {
           builder: (_) => const HomeScreen(
             ProductScreen(),
             ScreenName.PRODUCTS_SCREEN,
+          ),
+        );
+      case PRODUCTS_ADD_EDIT_ROUTE:
+        return MaterialPageRoute(
+          builder: (_) => HomeScreen(
+            ProductAddEditScreen(args),
+            ScreenName.PRODUCTS_ADD_EDIT_SCREEN,
           ),
         );
       case STOCK_ROUTE:

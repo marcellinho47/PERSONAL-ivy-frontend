@@ -8,6 +8,7 @@ class ProductEntity extends InclusionExclusionEntity {
   String? name;
   String? description;
   bool isSelect;
+  List<String> images;
 
   ProductEntity({
     this.idProduct,
@@ -15,6 +16,7 @@ class ProductEntity extends InclusionExclusionEntity {
     this.name,
     this.description,
     this.isSelect = false,
+    this.images = const [],
     idOperatorInclusion,
     inclusionDate,
     idOperatorExclusion,
@@ -32,6 +34,7 @@ class ProductEntity extends InclusionExclusionEntity {
       category: CategoryEntity.fromDocument(doc.get("category")),
       name: doc.get("name"),
       description: doc.get("description"),
+      images: doc.get("images"),
       idOperatorInclusion: doc.get('idOperatorInclusion'),
       inclusionDate: doc.get('inclusionDate'),
       idOperatorExclusion: doc.get('idOperatorExclusion'),
@@ -43,6 +46,7 @@ class ProductEntity extends InclusionExclusionEntity {
         "category": category!.toJson(),
         "name": name,
         "description": description,
+        "images": images,
         'idOperatorInclusion': idOperatorInclusion,
         'inclusionDate': inclusionDate,
         'idOperatorExclusion': idOperatorExclusion,

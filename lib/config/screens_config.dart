@@ -9,8 +9,12 @@ class ScreenName {
   static const String CATEGORIES_ADD_EDIT_SCREEN =
       "Cadastro / Edição de Categorias";
   static const String PRODUCTS_SCREEN = "Pesquisa de produtos";
+  static const String PRODUCTS_ADD_EDIT_SCREEN =
+      "Cadastro / Edição de produtos";
   static const String STOCK_SCREEN = "Estoque";
   static const String OPERATOR_SCREEN = "Pesquisa de Operadores";
   static const String OPERATOR_ADD_EDIT_SCREEN =
       "Cadastro / Edição de Operadores";
+  static const String CLIENTS_SCREEN = "Pesquisa de Clientes";
+  static const String CLIENTS_ADD_EDIT_SCREEN = "Cadastro / Edição de Clientes";
 }

@@ -262,85 +262,85 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   const SizedBox(
                     height: 50,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          _addCategory();
-                        },
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              const EdgeInsets.all(20)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: const [
-                            Text("Adicionar"),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Icon(
-                              Icons.add_circle_outline_rounded,
-                              size: 15,
-                            ),
-                          ],
-                        ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _addCategory();
+                  },
+                  style: ButtonStyle(
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: const [
+                      Text("Adicionar"),
+                      SizedBox(
+                        width: 5,
                       ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          _editCategory();
-                        },
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              const EdgeInsets.all(20)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: const [
-                            Text("Editar"),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Icon(
-                              Icons.mode_edit_outline_rounded,
-                              size: 15,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          _deleteCategory();
-                        },
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                              const EdgeInsets.all(20)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: const [
-                            Text("Excluir"),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Icon(
-                              Icons.delete_outline_rounded,
-                              size: 15,
-                            ),
-                          ],
-                        ),
+                      Icon(
+                        Icons.add_circle_outline_rounded,
+                        size: 15,
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _editCategory();
+                  },
+                  style: ButtonStyle(
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: const [
+                      Text("Editar"),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        Icons.mode_edit_outline_rounded,
+                        size: 15,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _deleteCategory();
+                  },
+                  style: ButtonStyle(
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: const [
+                      Text("Excluir"),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        Icons.delete_outline_rounded,
+                        size: 15,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),

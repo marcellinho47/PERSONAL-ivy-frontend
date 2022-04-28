@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_final_fields
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
@@ -145,6 +144,16 @@ class _NavBarState extends State<NavBar> {
               leading: const Icon(Icons.storage_rounded),
               onTap: () {
                 Navigator.pushReplacementNamed(context, Routes.STOCK_ROUTE);
+              },
+            ),
+          ),
+          Card(
+            elevation: _elevation,
+            child: ListTile(
+              title: const Text("Clientes"),
+              leading: const Icon(Icons.people_rounded),
+              onTap: () {
+                Navigator.pushReplacementNamed(context, Routes.CLIENTS_ROUTE);
               },
             ),
           ),
