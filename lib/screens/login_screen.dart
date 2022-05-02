@@ -138,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
-                              "SYS - IVY",
+                              "SYS - ANC",
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontFamily: 'VogueProject', fontSize: 32),
