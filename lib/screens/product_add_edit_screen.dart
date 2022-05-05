@@ -4,8 +4,10 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/config/storage_config.dart';
 import 'package:sys_ivy_frontend/entity/product_entity.dart';
 
@@ -36,6 +38,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseStorage _storage = FirebaseStorage.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
   Object? _args;
 
   // ----------------------------------------------------------
@@ -60,7 +63,10 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
     if (snapshot.docs.isNotEmpty) {
       for (DocumentSnapshot item in snapshot.docs) {
         setState(() {
-          _listCategory.add(CategoryEntity.fromDocument(item));
+          CategoryEntity cat = CategoryEntity.fromDocument(item);
+          if (cat.enabled != null && cat.enabled!) {
+            _listCategory.add(cat);
+          }
         });
       }
     }
@@ -87,7 +93,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
           _id.text = ce.idProduct!.toString();
           _description.text = ce.description == null ? '' : ce.description!;
           _name.text = ce.name!;
-          _categoryDropdownValue = ce.category;
+          _onChangeDropdown(ce.category!);
           _getImages(ce.images);
         });
       }
@@ -121,6 +127,11 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   }
 
   void _validForm() async {
+    if (_listCategory.isEmpty) {
+      showWarningToast(context, 'Não existe nenhuma categoria cadastrada');
+      return;
+    }
+
     if (_name.text.isEmpty) {
       showWarningToast(context, "Nome é um campo obrigatório!");
       return;
@@ -162,31 +173,33 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
       }
     }
 
-    _saveOrUpdate();
+    _saveOrUpdate(list);
   }
 
-  void _saveOrUpdate() async {
+  void _saveOrUpdate(List<ProductEntity> list) async {
     List<String> savedImage = await saveImages();
-    ProductEntity ce = formToObject(savedImage);
+    ProductEntity pe = formToObject(savedImage);
 
     if (_id.text.isEmpty) {
       // CREATE
+      int newId = list.isEmpty ? 1 : list.last.idProduct! + 1;
+      pe.idProduct = newId;
+
       await _firestore
           .collection(DaoConfig.PRODUCT_COLLECTION)
-          .add(ce.toJson());
+          .doc(newId.toString())
+          .set(pe.toJson());
     } else {
       // UPDATE
       await _firestore
           .collection(DaoConfig.PRODUCT_COLLECTION)
-          .doc(ce.idProduct.toString())
-          .update(ce.toJson());
+          .doc(pe.idProduct.toString())
+          .update(pe.toJson());
     }
 
     _cleanForm();
-
     showSuccessToast(context, "Produto salvo com sucesso!");
-
-    Navigator.pop(context);
+    Navigator.pushReplacementNamed(context, Routes.PRODUCTS_ROUTE);
   }
 
   ProductEntity formToObject(List<String> savedImage) {
@@ -195,6 +208,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
       description: _description.text,
       category: _categoryDropdownValue,
       images: savedImage,
+      idOperatorInclusion: _auth.currentUser!.uid,
+      inclusionDate: Timestamp.now(),
     );
   }
 
@@ -238,6 +253,14 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
         _images.add(file.bytes!);
       });
     }
+  }
+
+  _onChangeDropdown(CategoryEntity value) {
+    setState(() {
+      _categoryDropdownValue = _listCategory
+          .where((element) => element.idCategory == value.idCategory)
+          .first;
+    });
   }
 
   // ----------------------------------------------------------
@@ -303,7 +326,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
                       ),
                       onChanged: (CategoryEntity? category) {
                         setState(() {
-                          _categoryDropdownValue = category;
+                          _onChangeDropdown(category!);
                         });
                       },
                     ),

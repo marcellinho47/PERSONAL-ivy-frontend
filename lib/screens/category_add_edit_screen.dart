@@ -117,28 +117,17 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
   }
 
   void _saveOrUpdate(List<CategoryEntity> list) async {
-    if (_isCreate()) {
-      CategoryEntity ce = CategoryEntity(
-        description: _description.text.trim(),
-        enabled: _enabled,
-      );
+    CategoryEntity ce = _formToCategory();
 
-      List _ids = list.map((e) => e.idCategory!).toList();
-      _ids.sort((b, a) => a.compareTo(b));
-      int newID = _ids.first + 1;
+    if (_isCreate()) {
+      int newId = list.isEmpty ? 1 : list.last.idCategory! + 1;
+      ce.idCategory = newId;
 
       await _firestore
           .collection(DaoConfig.CATEGORY_COLLECTION)
-          .doc(newID.toString())
+          .doc(newId.toString())
           .set(ce.toJson());
     } else {
-      CategoryEntity ce = list
-          .where((element) =>
-              element.idCategory.toString().compareTo(_id.text) == 0)
-          .first;
-      ce.description = _description.text.trim();
-      ce.enabled = _enabled;
-
       await _firestore
           .collection(DaoConfig.CATEGORY_COLLECTION)
           .doc(ce.idCategory.toString())
@@ -147,6 +136,14 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
     _cleanForm();
     showSuccessToast(context, "Salvo com sucesso!");
     Navigator.pushReplacementNamed(context, Routes.CATEGORIES_ROUTE);
+  }
+
+  CategoryEntity _formToCategory() {
+    return CategoryEntity(
+      idCategory: _id.text.isEmpty ? null : int.parse(_id.text),
+      description: _description.text.trim(),
+      enabled: _enabled,
+    );
   }
 
   // ----------------------------------------------------------

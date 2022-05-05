@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CategoryEntity {
@@ -21,8 +23,17 @@ class CategoryEntity {
     );
   }
 
+  factory CategoryEntity.fromLinkedHashMap(LinkedHashMap<String, dynamic> doc) {
+    return CategoryEntity(
+      idCategory: int.parse(doc['idCategory'].toString()),
+      description: doc['description'],
+      enabled: doc['enabled'],
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         'description': description,
         'enabled': enabled,
+        'idCategory': idCategory,
       };
 }

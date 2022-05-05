@@ -69,8 +69,6 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   void _search() async {
-// TODO implements search by category
-
     _cleanList();
 
     DocumentReference? doc;
@@ -81,6 +79,7 @@ class _ProductScreenState extends State<ProductScreen> {
       doc = _firestore.collection(DaoConfig.PRODUCT_COLLECTION).doc(_id.text);
     } else {
       // ALL
+
       CollectionReference catRef =
           _firestore.collection(DaoConfig.PRODUCT_COLLECTION);
       snapshot = await catRef.get();

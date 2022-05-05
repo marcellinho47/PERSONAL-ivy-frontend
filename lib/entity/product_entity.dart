@@ -29,17 +29,22 @@ class ProductEntity extends InclusionExclusionEntity {
         );
 
   factory ProductEntity.fromDocument(DocumentSnapshot doc) {
-    return ProductEntity(
-      idProduct: int.parse(doc.id),
-      category: CategoryEntity.fromDocument(doc.get("category")),
-      name: doc.get("name"),
-      description: doc.get("description"),
-      images: doc.get("images"),
-      idOperatorInclusion: doc.get('idOperatorInclusion'),
-      inclusionDate: doc.get('inclusionDate'),
-      idOperatorExclusion: doc.get('idOperatorExclusion'),
-      exclusionDate: doc.get('exclusionDate'),
-    );
+    ProductEntity temp1 = ProductEntity();
+
+    temp1.idProduct = int.parse(doc.id);
+    temp1.name = doc.get("name");
+    temp1.description = doc.get("description");
+    temp1.category = CategoryEntity.fromLinkedHashMap(doc.get("category"));
+
+    List<dynamic> list = doc.get("images");
+    temp1.images = list.map((e) => e.toString()).toList();
+
+    temp1.idOperatorExclusion = doc.get("idOperatorExclusion");
+    temp1.exclusionDate = doc.get("exclusionDate");
+    temp1.idOperatorInclusion = doc.get("idOperatorInclusion");
+    temp1.inclusionDate = doc.get("inclusionDate");
+
+    return temp1;
   }
 
   Map<String, dynamic> toJson() => {
@@ -50,6 +55,7 @@ class ProductEntity extends InclusionExclusionEntity {
         'idOperatorInclusion': idOperatorInclusion,
         'inclusionDate': inclusionDate,
         'idOperatorExclusion': idOperatorExclusion,
-        'exclusionDate': exclusionDate
+        'exclusionDate': exclusionDate,
+        'idProduct': idProduct,
       };
 }
