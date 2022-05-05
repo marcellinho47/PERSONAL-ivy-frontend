@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/config/storage_config.dart';
 import 'package:sys_ivy_frontend/entity/product_entity.dart';
 
 import '../config/firestore_config.dart';
@@ -69,6 +70,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
     _id.text = '';
     _name.text = '';
     _description.text = '';
+    _categoryDropdownValue = null;
     _images = [];
   }
 
@@ -98,7 +100,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
     }
 
     for (var imageUrl in images) {
-      _storage.refFromURL(imageUrl).getData(10485760).then((data) {
+      _storage.refFromURL(imageUrl).getData().then((data) {
         setState(() {
           if (data != null) {
             _images.add(data);
@@ -163,24 +165,79 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
     _saveOrUpdate();
   }
 
-  void _saveOrUpdate() {
-    // TODO -
-    // Save the images first, get the id and save the product
+  void _saveOrUpdate() async {
+    List<String> savedImage = await saveImages();
+    ProductEntity ce = formToObject(savedImage);
+
+    if (_id.text.isEmpty) {
+      // CREATE
+      await _firestore
+          .collection(DaoConfig.PRODUCT_COLLECTION)
+          .add(ce.toJson());
+    } else {
+      // UPDATE
+      await _firestore
+          .collection(DaoConfig.PRODUCT_COLLECTION)
+          .doc(ce.idProduct.toString())
+          .update(ce.toJson());
+    }
+
+    _cleanForm();
+
+    showSuccessToast(context, "Produto salvo com sucesso!");
+
+    Navigator.pop(context);
+  }
+
+  ProductEntity formToObject(List<String> savedImage) {
+    return ProductEntity(
+      name: _name.text,
+      description: _description.text,
+      category: _categoryDropdownValue,
+      images: savedImage,
+    );
+  }
+
+  Future<List<String>> saveImages() async {
+    List<String> images = [];
+
+    for (var image in _images) {
+      String fileName =
+          DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
+
+      Reference ref =
+          _storage.ref().child(StorageConfig.PRODUCTS_IMAGE_PATH + fileName);
+
+      await ref.putData(image);
+
+      images.add(fileName);
+    }
+
+    return images;
   }
 
   void _selectImage() async {
     // image
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.image);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: true,
+      dialogTitle: "Selecione as imagens",
+    );
 
-    // recover the bytes
-    setState(() {
-      Uint8List? bytes = result?.files.single.bytes;
+    if (result == null) {
+      return;
+    }
 
-      if (bytes != null) {
-        _images.add(bytes);
+    for (PlatformFile file in result.files) {
+      if (file.size > 10485760) {
+        showWarningToast(context, "Tamanho máximo de arquivo é 10MB");
+        return;
       }
-    });
+
+      setState(() {
+        _images.add(file.bytes!);
+      });
+    }
   }
 
   // ----------------------------------------------------------
@@ -257,50 +314,42 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
             const SizedBox(
               height: 50,
             ),
-            ElevatedButton(
-              onPressed: _selectImage,
-              child: SizedBox(
-                width: _boxWidth(_screenWidth) / 3,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: const [
-                    Text(
-                      "Adicionar imagem",
-                      softWrap: true,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Icon(
-                      Icons.add_a_photo_rounded,
-                      size: 80,
-                    ),
-                  ],
-                ),
-              ),
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all(const EdgeInsets.all(20)),
-              ),
-            ),
             Visibility(
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _images.length,
-                    itemBuilder: (context, index) {
-                      return Image.memory(
-                        _images[index],
-                        fit: BoxFit.cover,
-                      );
-                    },
-                  ),
-                ],
-              ),
               visible: _images.isNotEmpty,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                ),
+                shrinkWrap: true,
+                itemCount: _images.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.memory(
+                            _images[index],
+                            height: 120,
+                            filterQuality: FilterQuality.high,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_rounded),
+                            onPressed: () {
+                              setState(() {
+                                _images.removeAt(index);
+                              });
+                            },
+                            tooltip: "Remover imagem",
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
             const SizedBox(
               height: 50,
@@ -308,6 +357,32 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                ElevatedButton(
+                  onPressed: _selectImage,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: const [
+                      Text(
+                        "Adicionar imagem",
+                        softWrap: true,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        Icons.add_a_photo_rounded,
+                        size: 15,
+                      ),
+                    ],
+                  ),
+                  style: ButtonStyle(
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
                 ElevatedButton(
                   onPressed: () {
                     setState(() {

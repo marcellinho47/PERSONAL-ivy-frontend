@@ -44,9 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
+    _checkOperatorLogin();
     _widgetBody = widget.widgetBody;
     _screenName = widget.screenName;
-    _checkOperatorLogin();
   }
 
   // ----------------------------------------------------------
@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: ColorPallete.primaryColor,
         title: Text(
-          "IVY - $_screenName",
+          "ANC - $_screenName",
           style: const TextStyle(
             color: Colors.white,
           ),
