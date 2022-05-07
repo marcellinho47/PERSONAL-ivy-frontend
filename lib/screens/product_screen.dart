@@ -6,6 +6,7 @@ import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/entity/category_entity.dart';
 import 'package:sys_ivy_frontend/entity/product_entity.dart';
+import 'package:sys_ivy_frontend/repos/product_repo.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -21,6 +22,8 @@ class _ProductScreenState extends State<ProductScreen> {
   // ----------------------------------------------------------
   TextEditingController _id = TextEditingController();
   TextEditingController _description = TextEditingController();
+
+  ProductRepo repo = ProductRepo();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<ProductEntity> _listProduct = [];
@@ -34,8 +37,14 @@ class _ProductScreenState extends State<ProductScreen> {
   void initState() {
     super.initState();
 
-    _cleanList();
+    _cleanForm();
     _fillCategories();
+  }
+
+  _cleanForm() {
+    _id.clear();
+    _description.clear();
+    _cleanList();
   }
 
   void _fillCategories() async {
@@ -153,10 +162,19 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   void _deleteProduct() {
-    if (_countSelectProduct() != 1) {
+    if (_countSelectProduct() > 1) {
       showWarningToast(context, "Selecione ao menos um produto para excluir.");
       return;
     }
+
+    repo.deleteAll(_listProduct
+        .where((element) => element.isSelect)
+        .map((e) => e.idProduct!)
+        .toList());
+
+    _cleanForm();
+
+    showSuccessToast(context, "Produtos excluídos com sucesso.");
   }
 
   int _countSelectProduct() {

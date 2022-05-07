@@ -32,8 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // METHODS
   // ----------------------------------------------------------
   void _checkOperatorLogin() async {
-// TODO remove operator excluded
-
     if (_auth.currentUser == null) {
       await _auth.signOut();
       Navigator.pushNamed(context, Routes.LOGIN_ROUTE);

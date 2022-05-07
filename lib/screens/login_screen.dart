@@ -31,10 +31,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    resetFields();
+
+    _resetFields();
   }
 
-  void resetFields() {
+  void _resetFields() {
     // TODO remove when goes to production
 
     _toastMsg = StringBuffer("");
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.text = "soumaisbulcao";
   }
 
-  Future<void> login(BuildContext context) async {
+  Future<void> _login(BuildContext context) async {
     String email = _emailController.text;
     String password = _passwordController.text;
 
@@ -50,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((auth) {
+        // TODO remove operator excluded
         Navigator.pushReplacementNamed(context, Routes.HOME_ROUTE);
       }).onError((error, stackTrace) {
         showErrorToast(context, "Usuário e/ou Senha inválidos");
@@ -57,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       setState(() {
         showWarningToast(context, _toastMsg.toString());
-        resetFields();
+        _resetFields();
       });
     }
   }
@@ -87,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return isValidForm;
   }
 
-  double loginBoxWidth(double screenWitdth) {
+  double _loginBoxWidth(double screenWitdth) {
     double loginBoxWidth = double.infinity;
 
     if (screenWitdth > 750) {
@@ -131,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: SizedBox(
                       height: 350,
-                      width: loginBoxWidth(_screenWidth),
+                      width: _loginBoxWidth(_screenWidth),
                       child: Padding(
                         padding: const EdgeInsets.all(40),
                         child: Column(
@@ -141,7 +143,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               "SYS - ANC",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontFamily: 'VogueProject', fontSize: 32),
+                                fontFamily: 'VogueProject',
+                                fontSize: 32,
+                              ),
                             ),
                             TextField(
                               controller: _emailController,
@@ -169,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: double.infinity,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  login(context);
+                                  _login(context);
                                 },
                                 child: const Padding(
                                   padding: EdgeInsets.all(12),

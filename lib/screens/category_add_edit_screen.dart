@@ -40,7 +40,6 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
     _args = widget.args;
 
     _cleanForm();
-
     _recoverCategory();
   }
 
@@ -77,8 +76,8 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
   }
 
   void _cleanForm() {
-    _id.text = "";
-    _description.text = "";
+    _id.clear();
+    _description.clear();
     _enabled = true;
   }
 

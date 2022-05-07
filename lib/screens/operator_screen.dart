@@ -21,6 +21,7 @@ class _OperatorState extends State<Operator> {
   // ----------------------------------------------------------
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
+
   List<OperatorEntity> _listOperators = [];
 
   // ----------------------------------------------------------
@@ -266,6 +267,9 @@ class _OperatorState extends State<Operator> {
   }
 }
 
+// ----------------------------------------------------------
+// AUXILIAR CLASS
+// ----------------------------------------------------------
 class OperatorDataTableSource extends DataTableSource {
   List<OperatorEntity> _listOperators;
   void Function() refreshComponent;

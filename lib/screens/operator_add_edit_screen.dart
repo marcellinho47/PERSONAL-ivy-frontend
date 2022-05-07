@@ -81,11 +81,11 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
   void _cleanForm() {
     op = OperatorEntity();
     dropdownRoleValue = Roles.ROLE_OPERADOR;
-    _uid.text = "";
-    _name.text = "";
-    _email.text = "";
-    _password.text = "";
-    _passwordConfirmation.text = "";
+    _uid.clear();
+    _name.clear();
+    _email.clear();
+    _password.clear();
+    _passwordConfirmation.clear();
     _isAdmin.text = Roles.ROLE_OPERADOR;
     _imageURL = "";
     _imageTEMP = null;
@@ -139,7 +139,7 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
       isValidForm = false;
     }
 
-    if (isCreate()) {
+    if (_isCreate()) {
       // PASSWORD
       if (_password.text.isEmpty) {
         _toastMsg.write("Senha não informada.\n");
@@ -309,7 +309,7 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
     _getDataEdit();
   }
 
-  bool isCreate() {
+  bool _isCreate() {
     return _uid.text.isEmpty;
   }
 
@@ -378,7 +378,7 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
                       ),
                     ),
                     Visibility(
-                      visible: isCreate(),
+                      visible: _isCreate(),
                       child: TextField(
                         controller: _password,
                         keyboardType: TextInputType.text,
@@ -392,7 +392,7 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
                       ),
                     ),
                     Visibility(
-                      visible: isCreate(),
+                      visible: _isCreate(),
                       child: TextField(
                         controller: _passwordConfirmation,
                         keyboardType: TextInputType.text,

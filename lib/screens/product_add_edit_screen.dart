@@ -73,9 +73,9 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   }
 
   void _cleanForm() {
-    _id.text = '';
-    _name.text = '';
-    _description.text = '';
+    _id.clear();
+    _name.clear();
+    _description.clear();
     _categoryDropdownValue = null;
     _images = [];
   }
@@ -177,8 +177,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   }
 
   void _saveOrUpdate(List<ProductEntity> list) async {
-    List<String> savedImage = await saveImages();
-    ProductEntity pe = formToObject(savedImage);
+    List<String> savedImage = await _saveImages();
+    ProductEntity pe = _formToObject(savedImage);
 
     if (_id.text.isEmpty) {
       // CREATE
@@ -202,7 +202,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
     Navigator.pushReplacementNamed(context, Routes.PRODUCTS_ROUTE);
   }
 
-  ProductEntity formToObject(List<String> savedImage) {
+  ProductEntity _formToObject(List<String> savedImage) {
     return ProductEntity(
       name: _name.text,
       description: _description.text,
@@ -213,7 +213,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
     );
   }
 
-  Future<List<String>> saveImages() async {
+  Future<List<String>> _saveImages() async {
     List<String> images = [];
 
     for (var image in _images) {
@@ -255,7 +255,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
     }
   }
 
-  _onChangeDropdown(CategoryEntity value) {
+  void _onChangeDropdown(CategoryEntity value) {
     setState(() {
       _categoryDropdownValue = _listCategory
           .where((element) => element.idCategory == value.idCategory)

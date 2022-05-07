@@ -20,6 +20,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   // ----------------------------------------------------------
   TextEditingController _id = TextEditingController();
   TextEditingController _description = TextEditingController();
+
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<CategoryEntity> _listCategories = [];
@@ -30,6 +31,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   void initState() {
     super.initState();
+
+    _cleanForm();
   }
 
   double _boxWidth(double _screenWidth) {
@@ -42,8 +45,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return loginBoxWidth;
   }
 
+  _cleanForm() {
+    _id.clear();
+    _description.clear();
+    _cleanList();
+  }
+
   void _search() async {
-    cleanList();
+    _cleanList();
 
     DocumentReference? doc;
     QuerySnapshot? snapshot;
@@ -100,7 +109,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
   }
 
-  void cleanList() {
+  void _cleanList() {
     _listCategories = [];
   }
 
