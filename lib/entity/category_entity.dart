@@ -32,8 +32,8 @@ class CategoryEntity {
   }
 
   Map<String, dynamic> toJson() => {
+        'idCategory': idCategory,
         'description': description,
         'enabled': enabled,
-        'idCategory': idCategory,
       };
 }

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sys_ivy_frontend/entity/adress_entity.dart';
 import 'package:sys_ivy_frontend/entity/adress_type_entity.dart';
@@ -15,11 +17,24 @@ class PersonAdressEntity {
 
   factory PersonAdressEntity.fromDocument(DocumentSnapshot doc) {
     return PersonAdressEntity(
-        idPersonAdress: int.parse(doc.id),
-        adress: AdressEntity.fromDocument(doc.get("adress")),
-        adressType: AdressTypeEntity.fromDocument(doc.get("adressType")));
+      idPersonAdress: int.parse(doc.id),
+      adress: AdressEntity.fromLinkedHashMap(doc.get("adress")),
+      adressType: AdressTypeEntity.fromLinkedHashMap(doc.get("adressType")),
+    );
   }
 
-  Map<String, dynamic> toJson() =>
-      {'adress': adress!.toJson(), "adressType": adressType!.toJson()};
+  factory PersonAdressEntity.fromLinkedHashMap(
+      LinkedHashMap<String, dynamic> doc) {
+    return PersonAdressEntity(
+      idPersonAdress: int.parse(doc['idPersonAdress'].toString()),
+      adress: AdressEntity.fromLinkedHashMap(doc['adress']),
+      adressType: AdressTypeEntity.fromLinkedHashMap(doc['adressType']),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'idPersonAdress': idPersonAdress,
+        'adress': adress!.toJson(),
+        "adressType": adressType!.toJson(),
+      };
 }

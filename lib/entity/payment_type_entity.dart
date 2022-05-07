@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PaymentTypeEntity {
@@ -11,8 +13,21 @@ class PaymentTypeEntity {
 
   factory PaymentTypeEntity.fromDocument(DocumentSnapshot doc) {
     return PaymentTypeEntity(
-        idPaymentType: int.parse(doc.id), description: doc.get("description"));
+      idPaymentType: int.parse(doc.id),
+      description: doc.get("description"),
+    );
   }
 
-  Map<String, dynamic> toJson() => {'description': description};
+  factory PaymentTypeEntity.fromLinkedHashMap(
+      LinkedHashMap<String, dynamic> doc) {
+    return PaymentTypeEntity(
+      idPaymentType: int.parse(doc['idPaymentType'].toString()),
+      description: doc['description'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'idPaymentType': idPaymentType,
+        'description': description,
+      };
 }

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DeliveryTypeEntity {
@@ -11,8 +13,21 @@ class DeliveryTypeEntity {
 
   factory DeliveryTypeEntity.fromDocument(DocumentSnapshot doc) {
     return DeliveryTypeEntity(
-        idDeliveryType: int.parse(doc.id), description: doc.get("description"));
+      idDeliveryType: int.parse(doc.id),
+      description: doc.get("description"),
+    );
   }
 
-  Map<String, dynamic> toJson() => {'description': description};
+  factory DeliveryTypeEntity.fromLinkedHashMap(
+      LinkedHashMap<String, dynamic> doc) {
+    return DeliveryTypeEntity(
+      idDeliveryType: int.parse(doc['idDeliveryType'].toString()),
+      description: doc['description'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'idDeliveryType': idDeliveryType,
+        'description': description,
+      };
 }

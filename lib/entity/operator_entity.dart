@@ -45,6 +45,7 @@ class OperatorEntity extends InclusionExclusionEntity {
   }
 
   Map<String, dynamic> toJson() => {
+        'idOperator': idOperator,
         'name': name,
         'login': login,
         'password': password,
