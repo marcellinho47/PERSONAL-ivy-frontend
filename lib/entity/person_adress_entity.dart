@@ -34,7 +34,7 @@ class PersonAdressEntity {
 
   Map<String, dynamic> toJson() => {
         'idPersonAdress': idPersonAdress,
-        'adress': adress!.toJson(),
-        "adressType": adressType!.toJson(),
+        'adress': adress?.toJson(),
+        "adressType": adressType?.toJson(),
       };
 }

@@ -51,11 +51,11 @@ class SalePaymentTypeEntity {
 
   Map<String, dynamic> toJson() => {
         'idSalePaymentType': idSalePaymentType,
-        'paymentType': paymentType!.toJson(),
+        'paymentType': paymentType?.toJson(),
         'totalValue': totalValue,
         'paidValue': paidValue,
         'totalInstallments': totalInstallments,
         'listSaleInstallments':
-            listSaleInstallments?.map((e) => e!.toJson()).toList(),
+            listSaleInstallments?.map((e) => e?.toJson()).toList(),
       };
 }

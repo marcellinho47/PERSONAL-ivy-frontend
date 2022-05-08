@@ -32,7 +32,7 @@ class ContactEntity {
 
   Map<String, dynamic> toJson() => {
         'idContact': idContact,
-        'contactType': contactType!.toJson(),
+        'contactType': contactType?.toJson(),
         'description': description,
       };
 }

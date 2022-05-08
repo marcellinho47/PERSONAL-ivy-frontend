@@ -38,6 +38,6 @@ class CityEntity {
         'idCity': idCity,
         'idIBGE': idIBGE,
         'name': name,
-        'state': state!.toJson(),
+        'state': state?.toJson(),
       };
 }

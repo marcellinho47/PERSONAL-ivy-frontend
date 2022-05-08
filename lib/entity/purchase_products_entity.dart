@@ -41,7 +41,7 @@ class PurchaseProductsEntity {
 
   Map<String, dynamic> toJson() => {
         'idPurchaseProducts': idPurchaseProducts,
-        'product': product!.toJson(),
+        'product': product?.toJson(),
         'quantity': quantity,
         'unitaryValue': unitaryValue,
         'discountValue': discountValue,

@@ -31,43 +31,36 @@ class ProductEntity extends InclusionExclusionEntity {
         );
 
   factory ProductEntity.fromDocument(DocumentSnapshot doc) {
-    ProductEntity temp1 = ProductEntity();
-
-    temp1.idProduct = int.parse(doc.id);
-    temp1.name = doc.get("name");
-    temp1.description = doc.get("description");
-    temp1.category = CategoryEntity.fromLinkedHashMap(doc.get("category"));
-
-    temp1.images = doc.get("images").map((e) => e.toString()).toList();
-
-    temp1.idOperatorExclusion = doc.get("idOperatorExclusion");
-    temp1.exclusionDate = doc.get("exclusionDate");
-    temp1.idOperatorInclusion = doc.get("idOperatorInclusion");
-    temp1.inclusionDate = doc.get("inclusionDate");
-
-    return temp1;
+    return ProductEntity(
+      idProduct: int.parse(doc.id),
+      name: doc.get("name"),
+      description: doc.get("description"),
+      category: CategoryEntity.fromLinkedHashMap(doc.get("category")),
+      images: doc.get("images").map((e) => e.toString()).toList(),
+      idOperatorExclusion: doc.get("idOperatorExclusion"),
+      exclusionDate: doc.get("exclusionDate"),
+      idOperatorInclusion: doc.get("idOperatorInclusion"),
+      inclusionDate: doc.get("inclusionDate"),
+    );
   }
 
   factory ProductEntity.fromLinkedHashMap(LinkedHashMap<String, dynamic> doc) {
-    ProductEntity temp1 = ProductEntity();
-    temp1.idProduct = int.parse(doc['idProduct'].toString());
-    temp1.name = doc['name'];
-    temp1.description = doc['description'];
-    temp1.category = CategoryEntity.fromLinkedHashMap(doc['category']);
-
-    temp1.images = doc['images'].map((e) => e.toString()).toList();
-
-    temp1.idOperatorExclusion = doc['idOperatorExclusion'];
-    temp1.exclusionDate = doc['exclusionDate'];
-    temp1.idOperatorInclusion = doc['idOperatorInclusion'];
-    temp1.inclusionDate = doc['inclusionDate'];
-
-    return temp1;
+    return ProductEntity(
+      idProduct: int.parse(doc['idProduct'].toString()),
+      name: doc['name'],
+      description: doc['description'],
+      category: CategoryEntity.fromLinkedHashMap(doc['category']),
+      images: doc['images'].map((e) => e.toString()).toList(),
+      idOperatorExclusion: doc['idOperatorExclusion'],
+      exclusionDate: doc['exclusionDate'],
+      idOperatorInclusion: doc['idOperatorInclusion'],
+      inclusionDate: doc['inclusionDate'],
+    );
   }
 
   Map<String, dynamic> toJson() => {
         'idProduct': idProduct,
-        "category": category!.toJson(),
+        "category": category?.toJson(),
         "name": name,
         "description": description,
         "images": images,

@@ -32,7 +32,7 @@ class StateEntity {
 
   Map<String, dynamic> toJson() => {
         'idState': idState,
-        'country': country!.toJson(),
+        'country': country?.toJson(),
         'name': name,
       };
 }
