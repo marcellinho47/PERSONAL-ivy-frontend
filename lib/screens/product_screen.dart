@@ -6,6 +6,7 @@ import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/entity/category_entity.dart';
 import 'package:sys_ivy_frontend/entity/product_entity.dart';
+import 'package:sys_ivy_frontend/repos/category_repo.dart';
 import 'package:sys_ivy_frontend/repos/product_repo.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
@@ -23,7 +24,8 @@ class _ProductScreenState extends State<ProductScreen> {
   TextEditingController _id = TextEditingController();
   TextEditingController _description = TextEditingController();
 
-  ProductRepo repo = ProductRepo();
+  ProductRepo _productRepo = ProductRepo();
+  CategoryRepo _categoryRepo = CategoryRepo();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<ProductEntity> _listProduct = [];
@@ -49,18 +51,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   void _fillCategories() async {
     _listCategory.add(CategoryEntity(description: ''));
-
-    CollectionReference catRef =
-        _firestore.collection(DaoConfig.CATEGORY_COLLECTION);
-    QuerySnapshot? snapshot = await catRef.get();
-
-    if (snapshot.docs.isNotEmpty) {
-      for (DocumentSnapshot item in snapshot.docs) {
-        setState(() {
-          _listCategory.add(CategoryEntity.fromDocument(item));
-        });
-      }
-    }
+    _listCategory.addAll(await _categoryRepo.findAll());
   }
 
   double _boxWidth(double _screenWidth) {
@@ -167,7 +158,7 @@ class _ProductScreenState extends State<ProductScreen> {
       return;
     }
 
-    repo.deleteAll(_listProduct
+    _productRepo.deleteAll(_listProduct
         .where((element) => element.isSelect)
         .map((e) => e.idProduct!)
         .toList());

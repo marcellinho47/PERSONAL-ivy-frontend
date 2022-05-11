@@ -1,11 +1,10 @@
 // ignore_for_file: prefer_final_fields
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/entity/operator_entity.dart';
+import 'package:sys_ivy_frontend/repos/operator_repo.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 class Operator extends StatefulWidget {
@@ -19,8 +18,8 @@ class _OperatorState extends State<Operator> {
   // ----------------------------------------------------------
   // VARIABLES
   // ----------------------------------------------------------
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
+  OperatorRepo _operatorRepo = OperatorRepo();
 
   List<OperatorEntity> _listOperators = [];
 
@@ -37,20 +36,9 @@ class _OperatorState extends State<Operator> {
   void _listAllOperators() async {
     _listOperators = [];
 
-    CollectionReference operatorRef =
-        _firestore.collection(DaoConfig.OPERATOR_COLLECTION);
-
-    QuerySnapshot snapshot = await operatorRef.get();
-
-    for (DocumentSnapshot item in snapshot.docs) {
-      OperatorEntity op = OperatorEntity.fromDocument(item);
-
-      if (Timestamp.fromMillisecondsSinceEpoch(1) == op.exclusionDate!) {
-        setState(() {
-          _listOperators.add(op);
-        });
-      }
-    }
+    setState(() async {
+      _listOperators.addAll(await _operatorRepo.findAll());
+    });
   }
 
   double _boxWidth(double _screenWidth) {
@@ -119,19 +107,16 @@ class _OperatorState extends State<Operator> {
     } else {
       // TODO ADD CONFIRMATION
 
-      // execute delete
-      List<OperatorEntity> list =
-          _listOperators.where((element) => element.isSelect).toList();
+      // get ids
+      List<String> list = _listOperators
+          .where((element) => element.isSelect)
+          .toList()
+          .map((e) => e.idOperator!)
+          .toList();
 
-      for (var i = 0; i < list.length; i++) {
-        list.elementAt(i).idOperatorExclusion = _auth.currentUser!.uid;
-        list.elementAt(i).exclusionDate = Timestamp.now();
+      // delete
+      _operatorRepo.deleteAll(list);
 
-        await _firestore
-            .collection(DaoConfig.OPERATOR_COLLECTION)
-            .doc(list.elementAt(i).idOperator)
-            .update(list.elementAt(i).toJson());
-      }
       setState(() {
         showSuccessToast(context, "Registros excluídos com sucesso.");
         _listAllOperators();

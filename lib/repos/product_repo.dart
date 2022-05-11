@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/entity/product_entity.dart';
+import 'package:sys_ivy_frontend/repos/category_repo.dart';
 import 'package:sys_ivy_frontend/repos/repo.dart';
 
 class ProductRepo extends Repo {
@@ -10,6 +11,7 @@ class ProductRepo extends Repo {
   // ----------------------------------------------------------
   late FirebaseFirestore _firestore;
   late FirebaseAuth _auth;
+  late CategoryRepo _categoryRepo;
 
   // ----------------------------------------------------------
   // CONSTRUCTOR
@@ -17,6 +19,7 @@ class ProductRepo extends Repo {
   ProductRepo() {
     _firestore = FirebaseFirestore.instance;
     _auth = FirebaseAuth.instance;
+    _categoryRepo = CategoryRepo();
   }
 
   // ----------------------------------------------------------
@@ -53,9 +56,10 @@ class ProductRepo extends Repo {
         .doc(id.toString())
         .get();
 
-    ProductEntity product = ProductEntity.fromDocument(snapshot);
+    ProductEntity pr = ProductEntity.fromDocument(snapshot);
+    pr.category = await _categoryRepo.findById(pr.category!.idCategory!);
 
-    return product.exclusionDate == null ? product : null;
+    return pr.exclusionDate == null ? pr : null;
   }
 
   @override
@@ -67,11 +71,18 @@ class ProductRepo extends Repo {
       return [];
     }
 
-    return snapshot.docs
+    List<ProductEntity> list = snapshot.docs
         .map((doc) => ProductEntity.fromDocument(doc))
         .toList()
         .where((element) => element.exclusionDate == null)
         .toList();
+
+    for (var element in list) {
+      element.category =
+          await _categoryRepo.findById(element.category!.idCategory!);
+    }
+
+    return list;
   }
 
   @override
@@ -112,5 +123,53 @@ class ProductRepo extends Repo {
     }
 
     return entity;
+  }
+
+  Future<List<ProductEntity>> findAllByCategory(int idCategory) async {
+    QuerySnapshot snapshot = await _firestore
+        .collection(DaoConfig.PRODUCT_COLLECTION)
+        .where('idCategory', isEqualTo: idCategory)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+
+    List<ProductEntity> list = snapshot.docs
+        .map((doc) => ProductEntity.fromDocument(doc))
+        .toList()
+        .where((element) => element.exclusionDate == null)
+        .toList();
+
+    for (var element in list) {
+      element.category =
+          await _categoryRepo.findById(element.category!.idCategory!);
+    }
+
+    return list;
+  }
+
+  Future<List<ProductEntity>> findAllByName(String name) async {
+    QuerySnapshot snapshot = await _firestore
+        .collection(DaoConfig.PRODUCT_COLLECTION)
+        .where('name', isEqualTo: name)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+
+    List<ProductEntity> list = snapshot.docs
+        .map((doc) => ProductEntity.fromDocument(doc))
+        .toList()
+        .where((element) => element.exclusionDate == null)
+        .toList();
+
+    for (var element in list) {
+      element.category =
+          await _categoryRepo.findById(element.category!.idCategory!);
+    }
+
+    return list;
   }
 }

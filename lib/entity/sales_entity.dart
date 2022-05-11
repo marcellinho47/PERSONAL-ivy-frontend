@@ -102,7 +102,7 @@ class SaleEntity {
 
   Map<String, dynamic> toJson() => {
         "idSaleEntity": idSaleEntity,
-        "clientPerson": clientPerson!.toJson(),
+        "clientPerson": clientPerson?.toJson(),
         "saleDate": saleDate,
         "expectedDeliveryDate": expectedDeliveryDate,
         "deliveryDate": deliveryDate,
