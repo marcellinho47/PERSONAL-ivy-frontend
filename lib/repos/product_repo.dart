@@ -149,7 +149,7 @@ class ProductRepo extends Repo {
     return list;
   }
 
-  Future<List<ProductEntity>> findAllByName(String name) async {
+  Future<List<ProductEntity>> findByName(String name) async {
     QuerySnapshot snapshot = await _firestore
         .collection(DaoConfig.PRODUCT_COLLECTION)
         .where('name', isEqualTo: name)
@@ -171,5 +171,18 @@ class ProductRepo extends Repo {
     }
 
     return list;
+  }
+
+  Future<List<ProductEntity>> findLikeByName(String name) async {
+    List<ProductEntity> list = await findAll();
+
+    if (list.isEmpty) {
+      return [];
+    }
+
+    return list
+        .where((element) =>
+            element.name!.toLowerCase().contains(name.toLowerCase().trim()))
+        .toList();
   }
 }

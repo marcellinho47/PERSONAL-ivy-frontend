@@ -7,8 +7,6 @@ import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 import 'package:sys_ivy_frontend/utils/functions.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
-// TODO refactor the class
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -36,8 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _resetFields() {
-    // TODO remove when goes to production
-
     _toastMsg = StringBuffer("");
     _emailController.text = "marcello_doalves@hotmail.com";
     _passwordController.text = "soumaisbulcao";
@@ -51,14 +47,15 @@ class _LoginScreenState extends State<LoginScreen> {
       await _auth
           .signInWithEmailAndPassword(email: email, password: password)
           .then((auth) {
-        // TODO remove operator excluded
         Navigator.pushReplacementNamed(context, Routes.HOME_ROUTE);
       }).onError((error, stackTrace) {
-        showErrorToast(context, "Usuário e/ou Senha inválidos");
+        showToast(context, ERROR_TYPE_TOAST, "Usuário e/ou Senha inválidos",
+            null, null);
       });
     } else {
       setState(() {
-        showWarningToast(context, _toastMsg.toString());
+        showToast(
+            context, WARNING_TYPE_TOAST, _toastMsg.toString(), null, null);
         _resetFields();
       });
     }

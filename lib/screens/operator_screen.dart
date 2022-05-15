@@ -59,7 +59,8 @@ class _OperatorState extends State<Operator> {
 
   void _addOperator() {
     if (!_isAdmin()) {
-      showWarningToast(context, "Usuário sem permissão!");
+      showToast(
+          context, WARNING_TYPE_TOAST, "Usuário sem permissão!", null, null);
       return;
     }
 
@@ -81,14 +82,16 @@ class _OperatorState extends State<Operator> {
 
   void _editOperator() {
     if (_countSelectOperators() != 1) {
-      showWarningToast(context, "Para a edição escolha 1 registro!");
+      showToast(context, WARNING_TYPE_TOAST,
+          "Para a edição escolha 1 registro!", null, null);
       return;
     } else {
       OperatorEntity op =
           _listOperators.where((element) => element.isSelect).toList().first;
 
       if (op.idOperator != _auth.currentUser!.uid) {
-        showWarningToast(context, "Só é possível alterar o seu cadastro!");
+        showToast(context, WARNING_TYPE_TOAST,
+            "Só é possível alterar o seu cadastro!", null, null);
         return;
       }
 
@@ -99,14 +102,14 @@ class _OperatorState extends State<Operator> {
 
   Future<void> _deleteOperator() async {
     if (_countSelectOperators() < 1) {
-      showWarningToast(context, "Para a exlusão escolha ao menos 1 registro!");
+      showToast(context, WARNING_TYPE_TOAST,
+          "Para a exlusão escolha ao menos 1 registro!", null, null);
       return;
     } else if (!_isAdmin()) {
-      showWarningToast(context, "Usuário sem permissão!");
+      showToast(
+          context, WARNING_TYPE_TOAST, "Usuário sem permissão!", null, null);
       return;
     } else {
-      // TODO ADD CONFIRMATION
-
       // get ids
       List<String> list = _listOperators
           .where((element) => element.isSelect)
@@ -118,7 +121,8 @@ class _OperatorState extends State<Operator> {
       _operatorRepo.deleteAll(list);
 
       setState(() {
-        showSuccessToast(context, "Registros excluídos com sucesso.");
+        showToast(context, SUCESS_TYPE_TOAST,
+            "Registros excluídos com sucesso.", null, null);
         _listAllOperators();
       });
     }

@@ -104,8 +104,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
 
     if (_listCategories.isEmpty) {
-      showSuccessToast(context,
-          "Não foram encontrados registros para os parâmetros informados.");
+      showToast(
+          context,
+          SUCESS_TYPE_TOAST,
+          "Não foram encontrados registros para os parâmetros informados.",
+          null,
+          null);
     }
   }
 
@@ -125,7 +129,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   void _editCategory() {
     if (_countSelectCategories() != 1) {
-      showWarningToast(context, "Selecione apenas 1 registro para alteração.");
+      showToast(context, WARNING_TYPE_TOAST,
+          "Selecione apenas 1 registro para alteração.", null, null);
       return;
     }
 
@@ -139,7 +144,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   void _deleteCategory() {
     if (_countSelectCategories() != 1) {
-      showWarningToast(context, "Selecione ao menos 1 registro para exclusão.");
+      showToast(context, WARNING_TYPE_TOAST,
+          "Selecione ao menos 1 registro para exclusão.", null, null);
       return;
     }
 

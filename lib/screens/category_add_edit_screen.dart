@@ -83,7 +83,8 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
 
   void _validForm() async {
     if (_description.text.isEmpty) {
-      showWarningToast(context, "Descrição é um campo obrigatório!");
+      showToast(context, WARNING_TYPE_TOAST,
+          "Descrição é um campo obrigatório!", null, null);
       return;
     }
 
@@ -104,8 +105,12 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
             .contains(_description.text.trim().toLowerCase())) {
           if (_id.text.isEmpty ||
               _id.text.compareTo(temp.idCategory.toString()) != 0) {
-            showWarningToast(context,
-                "Já existe uma categoria com essa descrição. ID: ${temp.idCategory}");
+            showToast(
+                context,
+                WARNING_TYPE_TOAST,
+                "Já existe uma categoria com essa descrição. ID: ${temp.idCategory}",
+                null,
+                null);
             return;
           }
         }
@@ -133,7 +138,7 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
           .update(ce.toJson());
     }
     _cleanForm();
-    showSuccessToast(context, "Salvo com sucesso!");
+    showToast(context, SUCESS_TYPE_TOAST, "Salvo com sucesso!", null, null);
     Navigator.pushReplacementNamed(context, Routes.CATEGORIES_ROUTE);
   }
 

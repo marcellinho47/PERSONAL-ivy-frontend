@@ -10,8 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/config/storage_config.dart';
 import 'package:sys_ivy_frontend/entity/product_entity.dart';
+import 'package:sys_ivy_frontend/repos/category_repo.dart';
+import 'package:sys_ivy_frontend/repos/product_repo.dart';
 
-import '../config/firestore_config.dart';
 import '../entity/category_entity.dart';
 import '../utils/toasts.dart';
 
@@ -36,10 +37,11 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   List<CategoryEntity> _listCategory = [];
   CategoryEntity? _categoryDropdownValue;
 
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseStorage _storage = FirebaseStorage.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   Object? _args;
+  CategoryRepo _categoryRepo = CategoryRepo();
+  ProductRepo _productRepo = ProductRepo();
 
   // ----------------------------------------------------------
   // METHODS
@@ -56,20 +58,11 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   }
 
   void _fillCategories() async {
-    CollectionReference catRef =
-        _firestore.collection(DaoConfig.CATEGORY_COLLECTION);
-    QuerySnapshot? snapshot = await catRef.get();
-
-    if (snapshot.docs.isNotEmpty) {
-      for (DocumentSnapshot item in snapshot.docs) {
-        setState(() {
-          CategoryEntity cat = CategoryEntity.fromDocument(item);
-          if (cat.enabled != null && cat.enabled!) {
-            _listCategory.add(cat);
-          }
-        });
-      }
-    }
+    _categoryRepo.findAllEnabled().then((list) {
+      setState(() {
+        _listCategory.addAll(list);
+      });
+    });
   }
 
   void _cleanForm() {
@@ -82,19 +75,16 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
   void _recoverProduct() async {
     if (_args != null && _args.toString().isNotEmpty) {
-      DocumentSnapshot snapshot = await _firestore
-          .collection(DaoConfig.PRODUCT_COLLECTION)
-          .doc(_args.toString())
-          .get();
+      ProductEntity? product = await _productRepo.findById(_args as int);
 
-      if (snapshot.exists) {
-        ProductEntity ce = ProductEntity.fromDocument(snapshot);
+      if (product != null) {
         setState(() {
-          _id.text = ce.idProduct!.toString();
-          _description.text = ce.description == null ? '' : ce.description!;
-          _name.text = ce.name!;
-          _onChangeDropdown(ce.category!);
-          _getImages(ce.images);
+          _id.text = product.idProduct!.toString();
+          _description.text =
+              product.description == null ? '' : product.description!;
+          _name.text = product.name!;
+          _onChangeDropdown(product.category!);
+          _getImages(product.images);
         });
       }
     }
@@ -105,7 +95,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
       _images = [];
     }
 
-    for (var imageUrl in images) {
+    for (String imageUrl in images) {
       _storage.refFromURL(imageUrl).getData().then((data) {
         setState(() {
           if (data != null) {
@@ -128,77 +118,57 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
   void _validForm() async {
     if (_listCategory.isEmpty) {
-      showWarningToast(context, 'Não existe nenhuma categoria cadastrada');
+      showToast(context, WARNING_TYPE_TOAST,
+          'Não existe nenhuma categoria cadastrada', null, null);
       return;
     }
 
     if (_name.text.isEmpty) {
-      showWarningToast(context, "Nome é um campo obrigatório!");
+      showToast(context, WARNING_TYPE_TOAST, "Nome é um campo obrigatório!",
+          null, null);
       return;
     }
 
     if (_categoryDropdownValue == null) {
-      showWarningToast(context, "Categoria é um campo obrigatório!");
+      showToast(context, WARNING_TYPE_TOAST,
+          "Categoria é um campo obrigatório!", null, null);
       return;
     }
 
     if (_description.text.isEmpty) {
-      showWarningToast(context, "Descrição é um campo obrigatório!");
+      showToast(context, WARNING_TYPE_TOAST,
+          "Descrição é um campo obrigatório!", null, null);
       return;
     }
 
     // Valid if exists another product with the same name
-    CollectionReference catRef =
-        _firestore.collection(DaoConfig.PRODUCT_COLLECTION);
+    List<ProductEntity?> listProduct =
+        await _productRepo.findByName(_name.text);
 
-    QuerySnapshot? snapshot = await catRef.get();
-
-    List<ProductEntity> list = [];
-    if (snapshot.docs.isNotEmpty) {
-      for (DocumentSnapshot item in snapshot.docs) {
-        ProductEntity temp = ProductEntity.fromDocument(item);
-        list.add(temp);
-
-        if (temp.name!
-            .toLowerCase()
-            .trim()
-            .contains(_name.text.trim().toLowerCase())) {
-          if (_id.text.isEmpty ||
-              _id.text.compareTo(temp.idProduct.toString()) != 0) {
-            showWarningToast(context,
-                "Já existe um produto com este nome. ID: ${temp.idProduct}");
-            return;
-          }
-        }
-      }
+    if (listProduct.isNotEmpty &&
+        (_id.text.isEmpty ||
+            listProduct.first!.idProduct != int.parse(_id.text))) {
+      showToast(
+          context,
+          WARNING_TYPE_TOAST,
+          "Já existe um produto com este nome - ID: ${listProduct.first!.idProduct}!",
+          null,
+          null);
+      return;
     }
 
-    _saveOrUpdate(list);
+    _saveOrUpdate();
   }
 
-  void _saveOrUpdate(List<ProductEntity> list) async {
+  void _saveOrUpdate() async {
     List<String> savedImage = await _saveImages();
     ProductEntity pe = _formToObject(savedImage);
 
-    if (_id.text.isEmpty) {
-      // CREATE
-      int newId = list.isEmpty ? 1 : list.last.idProduct! + 1;
-      pe.idProduct = newId;
-
-      await _firestore
-          .collection(DaoConfig.PRODUCT_COLLECTION)
-          .doc(newId.toString())
-          .set(pe.toJson());
-    } else {
-      // UPDATE
-      await _firestore
-          .collection(DaoConfig.PRODUCT_COLLECTION)
-          .doc(pe.idProduct.toString())
-          .update(pe.toJson());
-    }
+    _productRepo.save(pe);
 
     _cleanForm();
-    showSuccessToast(context, "Produto salvo com sucesso!");
+    showToast(
+        context, SUCESS_TYPE_TOAST, "Produto salvo com sucesso!", null, null);
     Navigator.pushReplacementNamed(context, Routes.PRODUCTS_ROUTE);
   }
 
@@ -245,7 +215,8 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
     for (PlatformFile file in result.files) {
       if (file.size > 10485760) {
-        showWarningToast(context, "Tamanho máximo de arquivo é 10MB");
+        showToast(context, WARNING_TYPE_TOAST,
+            "Tamanho máximo de arquivo é 10MB", null, null);
         return;
       }
 

@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_final_fields
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/entity/category_entity.dart';
 import 'package:sys_ivy_frontend/entity/product_entity.dart';
@@ -26,7 +24,6 @@ class _ProductScreenState extends State<ProductScreen> {
 
   ProductRepo _productRepo = ProductRepo();
   CategoryRepo _categoryRepo = CategoryRepo();
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<ProductEntity> _listProduct = [];
   List<CategoryEntity> _listCategory = [];
@@ -71,63 +68,46 @@ class _ProductScreenState extends State<ProductScreen> {
   void _search() async {
     _cleanList();
 
-    DocumentReference? doc;
-    QuerySnapshot? snapshot;
-
+    // Find By Id
     if (_id.text.isNotEmpty) {
-      // FILTERING BY ID
-      doc = _firestore.collection(DaoConfig.PRODUCT_COLLECTION).doc(_id.text);
+      _productRepo.findById(int.parse(_id.text.trim())).then((value) {
+        if (value != null) {
+          _listProduct.add(value);
+        }
+      });
+
+      // Find By Description
+    } else if (_description.text.isNotEmpty) {
+      _productRepo.findLikeByName(_description.text).then((value) {
+        _listProduct.addAll(value);
+      });
+
+      // Find By Category
+    } else if (_categoryDropdownValue != null &&
+        _categoryDropdownValue!.idCategory != null) {
+      _productRepo
+          .findAllByCategory(_categoryDropdownValue!.idCategory!)
+          .then((value) {
+        _listProduct.addAll(value);
+      });
     } else {
-      // ALL
-
-      CollectionReference catRef =
-          _firestore.collection(DaoConfig.PRODUCT_COLLECTION);
-      snapshot = await catRef.get();
+      // Find All
+      _productRepo.findAll().then((value) {
+        _listProduct.addAll(value);
+      });
     }
 
-    // Return
-    if (doc != null) {
-      //BY ID
-      DocumentSnapshot snapshot = await doc.get();
-
-      if (snapshot.exists) {
-        setState(() {
-          _listProduct.add(ProductEntity.fromDocument(snapshot));
-        });
-      }
-    } else if (snapshot != null && snapshot.docs.isNotEmpty) {
-      if (_description.text.isNotEmpty) {
-        // BY TEXT
-
-        for (DocumentSnapshot item in snapshot.docs) {
-          ProductEntity temp = ProductEntity.fromDocument(item);
-
-          if (temp.description!
-                  .toLowerCase()
-                  .trim()
-                  .contains(_description.text.trim().toLowerCase()) ||
-              temp.name!
-                  .toLowerCase()
-                  .trim()
-                  .contains(_description.text.trim().toLowerCase())) {
-            setState(() {
-              _listProduct.add(temp);
-            });
-          }
-        }
-      } else {
-        // ALL
-        for (DocumentSnapshot item in snapshot.docs) {
-          setState(() {
-            _listProduct.add(ProductEntity.fromDocument(item));
-          });
-        }
-      }
-    }
-
+    // Return Feedback
     if (_listProduct.isEmpty) {
-      showSuccessToast(context,
-          "Não foram encontrados registros para os parâmetros informados.");
+      showToast(
+          context,
+          SUCESS_TYPE_TOAST,
+          "Não foram encontrados registros para os parâmetros informados.",
+          null,
+          null);
+    } else {
+      showToast(context, SUCESS_TYPE_TOAST, "Busca realizada com sucesso.",
+          null, null);
     }
   }
 
@@ -143,7 +123,8 @@ class _ProductScreenState extends State<ProductScreen> {
 
   void _editProduct() {
     if (_countSelectProduct() != 1) {
-      showWarningToast(context, "Selecione 1 produto para editar.");
+      showToast(context, WARNING_TYPE_TOAST, "Selecione 1 produto para editar.",
+          null, null);
       return;
     }
 
@@ -154,7 +135,8 @@ class _ProductScreenState extends State<ProductScreen> {
 
   void _deleteProduct() {
     if (_countSelectProduct() > 1) {
-      showWarningToast(context, "Selecione ao menos um produto para excluir.");
+      showToast(context, WARNING_TYPE_TOAST,
+          "Selecione ao menos um produto para excluir.", null, null);
       return;
     }
 
@@ -165,7 +147,8 @@ class _ProductScreenState extends State<ProductScreen> {
 
     _cleanForm();
 
-    showSuccessToast(context, "Produtos excluídos com sucesso.");
+    showToast(context, SUCESS_TYPE_TOAST, "Produtos excluídos com sucesso.",
+        null, null);
   }
 
   int _countSelectProduct() {

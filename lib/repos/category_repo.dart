@@ -109,4 +109,18 @@ class CategoryRepo extends Repo {
 
     return entity;
   }
+
+  Future<List<CategoryEntity>> findAllEnabled() async {
+    QuerySnapshot snapshot =
+        await _firestore.collection(DaoConfig.PRODUCT_COLLECTION).get();
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+
+    return snapshot.docs
+        .map((doc) => CategoryEntity.fromDocument(doc))
+        .where((element) => element.enabled!)
+        .toList();
+  }
 }

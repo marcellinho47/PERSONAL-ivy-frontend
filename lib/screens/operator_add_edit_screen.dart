@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/config/roles_config.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
+import 'package:sys_ivy_frontend/config/storage_config.dart';
 import 'package:sys_ivy_frontend/entity/operator_entity.dart';
+import 'package:sys_ivy_frontend/repos/operator_repo.dart';
 import 'package:sys_ivy_frontend/utils/functions.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
@@ -34,6 +36,7 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
   FirebaseStorage _storage = FirebaseStorage.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   Object? _args;
+  OperatorRepo _operatorRepo = OperatorRepo();
 
   TextEditingController _uid = TextEditingController();
   TextEditingController _name = TextEditingController();
@@ -65,12 +68,7 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
     _cleanForm();
 
     if (_args != null) {
-      DocumentSnapshot doc = await _firestore
-          .collection(DaoConfig.OPERATOR_COLLECTION)
-          .doc(_args.toString())
-          .get();
-
-      op = OperatorEntity.fromDocument(doc);
+      op = await _operatorRepo.findById(_args as String);
 
       setState(() {
         _setEntitytoForm();
@@ -170,12 +168,10 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
       }
     }
 
-    // TODO valid if there is another user with this email
-
     if (isValidForm) {
       _createUpdateOperator();
     } else {
-      showWarningToast(context, _toastMsg.toString());
+      showToast(context, WARNING_TYPE_TOAST, _toastMsg.toString(), null, null);
     }
   }
 
@@ -209,7 +205,8 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
 
       // Return
       _cleanForm();
-      showSuccessToast(context, "Operador cadastrado com sucesso!");
+      showToast(context, SUCESS_TYPE_TOAST, "Operador cadastrado com sucesso!",
+          null, null);
       Navigator.pushReplacementNamed(context, Routes.OPERATOR_ROUTE);
     } else {
       // UPDATE ------------------------
@@ -229,7 +226,8 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
 
       // Return
       _auth.signOut();
-      showSuccessToast(context, "Operador alterado com sucesso!");
+      showToast(context, SUCESS_TYPE_TOAST, "Operador alterado com sucesso!",
+          null, null);
       Navigator.pushReplacementNamed(context, Routes.LOGIN_ROUTE);
     }
   }
@@ -285,7 +283,8 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
 
   Future<String> _uploadImagem(String idUser, String? url) async {
     if (_imageTEMP != null) {
-      Reference imagemPerfilRef = _storage.ref("images/users/$idUser.jpg");
+      Reference imagemPerfilRef =
+          _storage.ref(StorageConfig.USERS_IMAGE_PATH + "$idUser.jpg");
 
       UploadTask uploadTask = imagemPerfilRef.putData(
         _imageTEMP!,

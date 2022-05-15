@@ -93,10 +93,27 @@ class OperatorRepo {
     return entity;
   }
 
-  Future<List<OperatorEntity>> findAllByName(String name) async {
+  Future<List<OperatorEntity>> findByName(String name) async {
     QuerySnapshot snapshot = await _firestore
         .collection(DaoConfig.OPERATOR_COLLECTION)
         .where('name', isEqualTo: name)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+
+    return snapshot.docs
+        .map((doc) => OperatorEntity.fromDocument(doc))
+        .toList()
+        .where((element) => element.exclusionDate == null)
+        .toList();
+  }
+
+  Future<List<OperatorEntity>> findByLogin(String login) async {
+    QuerySnapshot snapshot = await _firestore
+        .collection(DaoConfig.OPERATOR_COLLECTION)
+        .where('login', isEqualTo: login.toLowerCase().trim())
         .get();
 
     if (snapshot.docs.isEmpty) {
