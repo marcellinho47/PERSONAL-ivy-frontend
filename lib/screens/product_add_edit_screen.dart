@@ -2,7 +2,6 @@
 
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -174,12 +173,11 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
   ProductEntity _formToObject(List<String> savedImage) {
     return ProductEntity(
+      idProduct: int.parse(_id.text),
       name: _name.text,
       description: _description.text,
       category: _categoryDropdownValue,
       images: savedImage,
-      idOperatorInclusion: _auth.currentUser!.uid,
-      inclusionDate: Timestamp.now(),
     );
   }
 
