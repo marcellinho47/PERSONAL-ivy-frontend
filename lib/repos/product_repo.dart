@@ -67,6 +67,8 @@ class ProductRepo extends Repo {
     QuerySnapshot snapshot =
         await _firestore.collection(DaoConfig.PRODUCT_COLLECTION).get();
 
+    print("product collection " + snapshot.docs.length.toString());
+
     if (snapshot.docs.isEmpty) {
       return [];
     }
@@ -77,7 +79,7 @@ class ProductRepo extends Repo {
         .where((element) => element.exclusionDate == null)
         .toList();
 
-    for (var element in list) {
+    for (ProductEntity element in list) {
       element.category =
           await _categoryRepo.findById(element.category!.idCategory!);
     }
@@ -103,16 +105,17 @@ class ProductRepo extends Repo {
   @override
   Future<ProductEntity> save(Object entity) async {
     entity = entity as ProductEntity;
+    entity.inclusionDate = Timestamp.now();
+    entity.idOperatorInclusion = _auth.currentUser?.uid;
 
     if (entity.idProduct == null) {
       // Create
       int? maxId = await findMaxID();
-
-      entity.idProduct = maxId;
+      entity.idProduct = (maxId == null ? 1 : (maxId + 1));
 
       _firestore
           .collection(DaoConfig.PRODUCT_COLLECTION)
-          .doc(maxId == null ? '1' : (maxId + 1).toString())
+          .doc(entity.idProduct.toString())
           .set(entity.toJson());
     } else {
       // Update

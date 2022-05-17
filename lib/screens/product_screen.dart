@@ -48,7 +48,11 @@ class _ProductScreenState extends State<ProductScreen> {
 
   void _fillCategories() async {
     _listCategory.add(CategoryEntity(description: ''));
-    _listCategory.addAll(await _categoryRepo.findAll());
+    _categoryRepo.findAll().then((list) {
+      setState(() {
+        _listCategory.addAll(list);
+      });
+    });
   }
 
   double _boxWidth(double _screenWidth) {
@@ -70,30 +74,38 @@ class _ProductScreenState extends State<ProductScreen> {
 
     // Find By Id
     if (_id.text.isNotEmpty) {
-      _productRepo.findById(int.parse(_id.text.trim())).then((value) {
+      await _productRepo.findById(int.parse(_id.text.trim())).then((value) {
         if (value != null) {
-          _listProduct.add(value);
+          setState(() {
+            _listProduct.add(value);
+          });
         }
       });
 
       // Find By Description
     } else if (_description.text.isNotEmpty) {
-      _productRepo.findLikeByName(_description.text).then((value) {
-        _listProduct.addAll(value);
+      await _productRepo.findLikeByName(_description.text).then((value) {
+        setState(() {
+          _listProduct.addAll(value);
+        });
       });
 
       // Find By Category
     } else if (_categoryDropdownValue != null &&
         _categoryDropdownValue!.idCategory != null) {
-      _productRepo
+      await _productRepo
           .findAllByCategory(_categoryDropdownValue!.idCategory!)
           .then((value) {
-        _listProduct.addAll(value);
+        setState(() {
+          _listProduct.addAll(value);
+        });
       });
     } else {
       // Find All
-      _productRepo.findAll().then((value) {
-        _listProduct.addAll(value);
+      await _productRepo.findAll().then((value) {
+        setState(() {
+          _listProduct.addAll(value);
+        });
       });
     }
 
@@ -240,9 +252,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           flex: 2,
                           child: ElevatedButton(
                             onPressed: () {
-                              setState(() {
-                                _search();
-                              });
+                              _search();
                             },
                             style: ButtonStyle(
                               padding: MaterialStateProperty.all(

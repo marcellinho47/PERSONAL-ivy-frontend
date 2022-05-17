@@ -122,6 +122,20 @@ class Routes {
             ScreenName.OPERATOR_ADD_EDIT_SCREEN,
           ),
         );
+      case CLIENTS_ROUTE:
+        return MaterialPageRoute(
+          builder: (_) => const HomeScreen(
+            null,
+            ScreenName.CLIENTS_SCREEN,
+          ),
+        );
+      case CLIENTS_ADD_EDIT_ROUTE:
+        return MaterialPageRoute(
+          builder: (_) => const HomeScreen(
+            null,
+            ScreenName.CLIENTS_ADD_EDIT_SCREEN,
+          ),
+        );
     }
 
     return _errorNotFoundRoute();

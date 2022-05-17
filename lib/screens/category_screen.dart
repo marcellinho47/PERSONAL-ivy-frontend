@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/entity/category_entity.dart';
+import 'package:sys_ivy_frontend/repos/category_repo.dart';
+import 'package:sys_ivy_frontend/repos/product_repo.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -22,6 +24,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
   TextEditingController _description = TextEditingController();
 
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  ProductRepo _productRepo = ProductRepo();
+  CategoryRepo _categoryRepo = CategoryRepo();
 
   List<CategoryEntity> _listCategories = [];
 
@@ -149,8 +153,65 @@ class _CategoryScreenState extends State<CategoryScreen> {
       return;
     }
 
-    // TODO create method that valids if there product associated to a category = disabled
-    // else delete
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Atenção"),
+          content: const Text("Deseja realmente excluir o registro?"),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text("Excluir"),
+              onPressed: () {
+                _delete();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _delete() {
+    _productRepo
+        .findAllByCategory(
+      _listCategories.where((element) => element.isSelect).first.idCategory!,
+    )
+        .then((value) {
+      if (value.isNotEmpty) {
+        showToast(
+          context,
+          WARNING_TYPE_TOAST,
+          "Não é possível excluir uma categoria que possui produtos cadastrados.",
+          null,
+          null,
+        );
+        return;
+      }
+
+      _categoryRepo.delete(
+        _listCategories.where((element) => element.isSelect).first.idCategory!,
+      );
+
+      setState(() {
+        _listCategories = [];
+      });
+
+      showToast(
+        context,
+        SUCESS_TYPE_TOAST,
+        "Registro excluído com sucesso.",
+        null,
+        null,
+      );
+    });
   }
 
   int _countSelectCategories() {

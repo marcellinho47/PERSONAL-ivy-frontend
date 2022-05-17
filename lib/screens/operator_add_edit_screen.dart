@@ -3,12 +3,10 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/config/firestore_config.dart';
 import 'package:sys_ivy_frontend/config/roles_config.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/config/storage_config.dart';
@@ -32,7 +30,6 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
   // ----------------------------------------------------------
   // VARIABLES
   // ----------------------------------------------------------
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseStorage _storage = FirebaseStorage.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   Object? _args;
@@ -118,7 +115,7 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
     }
   }
 
-  void _validForm() {
+  void _validForm() async {
     bool isValidForm = true;
     _toastMsg = StringBuffer("");
 
@@ -169,6 +166,19 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
     }
 
     if (isValidForm) {
+      // ANOTHER USER WITH THIS EMAIL
+      List<OperatorEntity?> listEmail =
+          await _operatorRepo.findByLogin(_email.text);
+
+      if (listEmail.isNotEmpty &&
+          listEmail.first != null &&
+          (_uid.text.isEmpty || listEmail.first!.idOperator != _uid.text)) {
+        _toastMsg.write("E-mail já cadastrado.\n");
+        isValidForm = false;
+      }
+    }
+
+    if (isValidForm) {
       _createUpdateOperator();
     } else {
       showToast(context, WARNING_TYPE_TOAST, _toastMsg.toString(), null, null);
@@ -178,58 +188,15 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
   void _createUpdateOperator() async {
     _setFormToEntity();
 
-    if (op!.idOperator == null || op!.idOperator!.isEmpty) {
-      // CREATE ----------------------
+    OperatorEntity save = await _operatorRepo.save(op!);
+    String urlImg = await _uploadImagem(save.idOperator!, op!.imageURL);
+    _operatorRepo.updateimageURL(save.idOperator!, urlImg);
 
-      // Firebase Auth User
-      op!.idOperatorInclusion = _auth.currentUser!.uid;
-      op!.inclusionDate = Timestamp.now();
-      op!.exclusionDate = Timestamp.fromMillisecondsSinceEpoch(1);
-
-      UserCredential user = await _auth.createUserWithEmailAndPassword(
-          email: op!.login!, password: op!.password!);
-
-      String urlImg = await _uploadImagem(user.user!.uid, op!.imageURL);
-
-      await user.user!.updateDisplayName(op!.name);
-      await user.user!.updatePhotoURL(urlImg);
-
-      // Firestore Auth User
-      op!.imageURL = urlImg;
-      op!.password = "";
-
-      await _firestore
-          .collection(DaoConfig.OPERATOR_COLLECTION)
-          .doc(user.user!.uid)
-          .set(op!.toJson());
-
-      // Return
-      _cleanForm();
-      showToast(context, SUCESS_TYPE_TOAST, "Operador cadastrado com sucesso!",
-          null, null);
-      Navigator.pushReplacementNamed(context, Routes.OPERATOR_ROUTE);
-    } else {
-      // UPDATE ------------------------
-      String urlImg = await _uploadImagem(_auth.currentUser!.uid, op!.imageURL);
-      op!.imageURL = urlImg;
-
-      await _auth.currentUser!.updateDisplayName(op!.name);
-      await _auth.currentUser!.updateEmail(op!.login!);
-      await _auth.currentUser!.updatePhotoURL(op!.imageURL);
-
-      op!.password = "";
-
-      await _firestore
-          .collection(DaoConfig.OPERATOR_COLLECTION)
-          .doc(op!.idOperator)
-          .update(op!.toJson());
-
-      // Return
-      _auth.signOut();
-      showToast(context, SUCESS_TYPE_TOAST, "Operador alterado com sucesso!",
-          null, null);
-      Navigator.pushReplacementNamed(context, Routes.LOGIN_ROUTE);
-    }
+    // Return
+    _auth.signOut();
+    showToast(
+        context, SUCESS_TYPE_TOAST, "Operador salvo com sucesso!", null, null);
+    Navigator.pushReplacementNamed(context, Routes.LOGIN_ROUTE);
   }
 
   Widget _hasImage() {

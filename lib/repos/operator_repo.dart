@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sys_ivy_frontend/entity/operator_entity.dart';
-import 'package:sys_ivy_frontend/repos/category_repo.dart';
 
 import '../config/firestore_config.dart';
 
@@ -11,7 +10,6 @@ class OperatorRepo {
   // ----------------------------------------------------------
   late FirebaseFirestore _firestore;
   late FirebaseAuth _auth;
-  late CategoryRepo _categoryRepo;
 
   // ----------------------------------------------------------
   // CONSTRUCTOR
@@ -19,7 +17,6 @@ class OperatorRepo {
   OperatorRepo() {
     _firestore = FirebaseFirestore.instance;
     _auth = FirebaseAuth.instance;
-    _categoryRepo = CategoryRepo();
   }
 
   // ----------------------------------------------------------
@@ -76,21 +73,42 @@ class OperatorRepo {
   Future<OperatorEntity> save(Object entity) async {
     entity = entity as OperatorEntity;
 
-    if (entity.idOperator == null) {
+    // Authentication
+    if (entity.idOperator == null || entity.idOperator!.isEmpty) {
       // Create
-      _firestore
-          .collection(DaoConfig.PRODUCT_COLLECTION)
-          .doc(entity.idOperator)
-          .set(entity.toJson());
+      UserCredential user = await _auth.createUserWithEmailAndPassword(
+        email: entity.login!,
+        password: entity.password!,
+      );
+      entity.idOperator = user.user!.uid;
     } else {
       // Update
-      _firestore
-          .collection(DaoConfig.PRODUCT_COLLECTION)
-          .doc(entity.idOperator)
-          .update(entity.toJson());
+      _auth.currentUser!.updateEmail(entity.login!);
+      _auth.currentUser!.updatePassword(entity.password!);
+      _auth.currentUser!.updateDisplayName(entity.name!);
+      _auth.currentUser!.updatePhotoURL(entity.imageURL);
     }
 
+    // Firestore
+    if (entity.idOperatorInclusion == null) {
+      entity.idOperatorInclusion = _auth.currentUser!.uid;
+      entity.inclusionDate = Timestamp.now();
+    }
+    entity.password = "";
+
+    await _firestore
+        .collection(DaoConfig.OPERATOR_COLLECTION)
+        .doc(entity.idOperator)
+        .set(entity.toJson());
+
     return entity;
+  }
+
+  void updateimageURL(String id, String imageURL) {
+    _firestore
+        .collection(DaoConfig.OPERATOR_COLLECTION)
+        .doc(id)
+        .update({'imageURL': imageURL});
   }
 
   Future<List<OperatorEntity>> findByName(String name) async {
@@ -110,7 +128,7 @@ class OperatorRepo {
         .toList();
   }
 
-  Future<List<OperatorEntity>> findByLogin(String login) async {
+  Future<List<OperatorEntity?>> findByLogin(String login) async {
     QuerySnapshot snapshot = await _firestore
         .collection(DaoConfig.OPERATOR_COLLECTION)
         .where('login', isEqualTo: login.toLowerCase().trim())

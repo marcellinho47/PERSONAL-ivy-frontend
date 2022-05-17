@@ -36,8 +36,10 @@ class _OperatorState extends State<Operator> {
   void _listAllOperators() async {
     _listOperators = [];
 
-    setState(() async {
-      _listOperators.addAll(await _operatorRepo.findAll());
+    List<OperatorEntity> list = await _operatorRepo.findAll();
+
+    setState(() {
+      _listOperators.addAll(list);
     });
   }
 

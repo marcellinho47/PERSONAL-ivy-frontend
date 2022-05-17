@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _resetFields() {
     _toastMsg = StringBuffer("");
     _emailController.text = "marcello_doalves@hotmail.com";
-    _passwordController.text = "soumaisbulcao";
+    _passwordController.text = "123456123";
   }
 
   Future<void> _login(BuildContext context) async {

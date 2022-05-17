@@ -36,7 +36,9 @@ class ProductEntity extends InclusionExclusionEntity {
       name: doc.get("name"),
       description: doc.get("description"),
       category: CategoryEntity.fromLinkedHashMap(doc.get("category")),
-      images: doc.get("images").map((e) => e.toString()).toList(),
+      images: (doc.get("images") as List<dynamic>).isEmpty
+          ? []
+          : doc.get("images").map((e) => e.toString()).toList(),
       idOperatorExclusion: doc.get("idOperatorExclusion"),
       exclusionDate: doc.get("exclusionDate"),
       idOperatorInclusion: doc.get("idOperatorInclusion"),

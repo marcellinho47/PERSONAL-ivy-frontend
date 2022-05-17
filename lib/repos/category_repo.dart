@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sys_ivy_frontend/entity/category_entity.dart';
 import 'package:sys_ivy_frontend/repos/repo.dart';
 
@@ -10,14 +9,12 @@ class CategoryRepo extends Repo {
   // VARIABLES
   // ----------------------------------------------------------
   late FirebaseFirestore _firestore;
-  late FirebaseAuth _auth;
 
   // ----------------------------------------------------------
   // CONSTRUCTOR
   // ----------------------------------------------------------
   CategoryRepo() {
     _firestore = FirebaseFirestore.instance;
-    _auth = FirebaseAuth.instance;
   }
 
   // ----------------------------------------------------------
@@ -38,12 +35,10 @@ class CategoryRepo extends Repo {
       return;
     }
 
-    cat.enabled = false;
-
     _firestore
         .collection(DaoConfig.CATEGORY_COLLECTION)
-        .doc(id.toString())
-        .update(cat.toJson());
+        .doc(cat.idCategory!.toString())
+        .delete();
   }
 
   @override
@@ -59,7 +54,7 @@ class CategoryRepo extends Repo {
   @override
   Future<List<CategoryEntity>> findAll() async {
     QuerySnapshot snapshot =
-        await _firestore.collection(DaoConfig.PRODUCT_COLLECTION).get();
+        await _firestore.collection(DaoConfig.CATEGORY_COLLECTION).get();
 
     if (snapshot.docs.isEmpty) {
       return [];
@@ -112,7 +107,7 @@ class CategoryRepo extends Repo {
 
   Future<List<CategoryEntity>> findAllEnabled() async {
     QuerySnapshot snapshot =
-        await _firestore.collection(DaoConfig.PRODUCT_COLLECTION).get();
+        await _firestore.collection(DaoConfig.CATEGORY_COLLECTION).get();
 
     if (snapshot.docs.isEmpty) {
       return [];
