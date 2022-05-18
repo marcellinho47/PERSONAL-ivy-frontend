@@ -3,6 +3,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
+import 'package:sys_ivy_frontend/entity/operator_entity.dart';
+import 'package:sys_ivy_frontend/repos/operator_repo.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
 
 class NavBar extends StatefulWidget {
@@ -17,13 +19,19 @@ class _NavBarState extends State<NavBar> {
   // VARIABLES
   // ----------------------------------------------------------
   static const double _elevation = 2;
+  OperatorEntity? _operatorEntity =
+      OperatorEntity(name: "", login: "", imageURL: "");
+
   FirebaseAuth _auth = FirebaseAuth.instance;
+  OperatorRepo _operatorRepo = OperatorRepo();
 
   // ----------------------------------------------------------
   // METHODS
   // ----------------------------------------------------------
   bool hasUserPhoto() {
-    if (_auth.currentUser != null && _auth.currentUser!.photoURL != null) {
+    if (_operatorEntity != null &&
+        _operatorEntity!.imageURL != null &&
+        _operatorEntity!.imageURL!.isNotEmpty) {
       return true;
     }
     return false;
@@ -32,6 +40,16 @@ class _NavBarState extends State<NavBar> {
   @override
   void initState() {
     super.initState();
+
+    _recoverOperator();
+  }
+
+  void _recoverOperator() {
+    _operatorRepo.findById(_auth.currentUser!.uid).then((operator) {
+      setState(() {
+        _operatorEntity = operator;
+      });
+    });
   }
 
   // ----------------------------------------------------------
@@ -44,13 +62,13 @@ class _NavBarState extends State<NavBar> {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              _auth.currentUser!.displayName!,
+              _operatorEntity!.name!,
               style: const TextStyle(
                 color: Colors.white,
               ),
             ),
             accountEmail: Text(
-              _auth.currentUser!.email!,
+              _operatorEntity!.login!,
               style: const TextStyle(
                 color: Colors.white,
               ),
@@ -68,7 +86,7 @@ class _NavBarState extends State<NavBar> {
                                 fit: BoxFit.fitWidth,
                                 alignment: FractionalOffset.topCenter,
                                 image: NetworkImage(
-                                  _auth.currentUser!.photoURL!,
+                                  _operatorEntity!.imageURL!,
                                   scale: 4,
                                 ),
                               ),

@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   StringBuffer _toastMsg = StringBuffer("");
+
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   // ----------------------------------------------------------

@@ -67,8 +67,6 @@ class ProductRepo extends Repo {
     QuerySnapshot snapshot =
         await _firestore.collection(DaoConfig.PRODUCT_COLLECTION).get();
 
-    print("product collection " + snapshot.docs.length.toString());
-
     if (snapshot.docs.isEmpty) {
       return [];
     }

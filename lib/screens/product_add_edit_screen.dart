@@ -3,7 +3,6 @@
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
@@ -37,7 +36,6 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
   CategoryEntity? _categoryDropdownValue;
 
   FirebaseStorage _storage = FirebaseStorage.instance;
-  FirebaseAuth _auth = FirebaseAuth.instance;
   Object? _args;
   CategoryRepo _categoryRepo = CategoryRepo();
   ProductRepo _productRepo = ProductRepo();
@@ -173,7 +171,7 @@ class _ProductAddEditScreenState extends State<ProductAddEditScreen> {
 
   ProductEntity _formToObject(List<String> savedImage) {
     return ProductEntity(
-      idProduct: int.parse(_id.text),
+      idProduct: _id.text.isEmpty ? null : int.parse(_id.text),
       name: _name.text,
       description: _description.text,
       category: _categoryDropdownValue,

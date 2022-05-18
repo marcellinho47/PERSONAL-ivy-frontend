@@ -107,27 +107,57 @@ class _OperatorState extends State<Operator> {
       showToast(context, WARNING_TYPE_TOAST,
           "Para a exlusão escolha ao menos 1 registro!", null, null);
       return;
-    } else if (!_isAdmin()) {
+    }
+
+    // Only admin can delete
+    if (!_isAdmin()) {
       showToast(
           context, WARNING_TYPE_TOAST, "Usuário sem permissão!", null, null);
       return;
-    } else {
-      // get ids
-      List<String> list = _listOperators
-          .where((element) => element.isSelect)
-          .toList()
-          .map((e) => e.idOperator!)
-          .toList();
-
-      // delete
-      _operatorRepo.deleteAll(list);
-
-      setState(() {
-        showToast(context, SUCESS_TYPE_TOAST,
-            "Registros excluídos com sucesso.", null, null);
-        _listAllOperators();
-      });
     }
+
+    // Confirmation
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Atenção"),
+          content: const Text("Deseja realmente excluir o registro?"),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text("Excluir"),
+              onPressed: () {
+                _delete();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _delete() async {
+    // get ids
+    List<String> list = _listOperators
+        .where((element) => element.isSelect)
+        .toList()
+        .map((e) => e.idOperator!)
+        .toList();
+
+    // delete
+    _operatorRepo.deleteAll(list);
+
+    _listAllOperators();
+
+    showToast(context, SUCESS_TYPE_TOAST, "Registros excluídos com sucesso.",
+        null, null);
   }
 
   int _countSelectOperators() {

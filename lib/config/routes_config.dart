@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/screens_config.dart';
 import 'package:sys_ivy_frontend/screens/category_add_edit_screen.dart';
 import 'package:sys_ivy_frontend/screens/category_screen.dart';
+import 'package:sys_ivy_frontend/screens/client_add_edit_screen.dart';
+import 'package:sys_ivy_frontend/screens/client_screen.dart';
 import 'package:sys_ivy_frontend/screens/dashboard_screen.dart';
 import 'package:sys_ivy_frontend/screens/home_screen.dart';
 import 'package:sys_ivy_frontend/screens/login_screen.dart';
@@ -125,14 +127,14 @@ class Routes {
       case CLIENTS_ROUTE:
         return MaterialPageRoute(
           builder: (_) => const HomeScreen(
-            null,
+            ClientScreen(),
             ScreenName.CLIENTS_SCREEN,
           ),
         );
       case CLIENTS_ADD_EDIT_ROUTE:
         return MaterialPageRoute(
-          builder: (_) => const HomeScreen(
-            null,
+          builder: (_) => HomeScreen(
+            ClientAddEditScreen(args),
             ScreenName.CLIENTS_ADD_EDIT_SCREEN,
           ),
         );

@@ -3,7 +3,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
+import 'package:sys_ivy_frontend/repos/operator_repo.dart';
 import 'package:sys_ivy_frontend/utils/color_pallete.dart';
+import 'package:sys_ivy_frontend/utils/toasts.dart';
 import 'package:sys_ivy_frontend/widgets/nav_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -28,14 +30,37 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget? _widgetBody;
   late String _screenName;
 
+  OperatorRepo _operatorRepo = OperatorRepo();
+
   // ----------------------------------------------------------
   // METHODS
   // ----------------------------------------------------------
   void _checkOperatorLogin() async {
+    // AUTH
     if (_auth.currentUser == null) {
+      // Logout
       await _auth.signOut();
       Navigator.pushNamed(context, Routes.LOGIN_ROUTE);
     }
+
+    // FIRESTORE
+    _operatorRepo.findById(_auth.currentUser!.uid).then((operator) async {
+      // Check is operator is not deleted
+      if (operator != null && operator.exclusionDate != null) {
+        // Feedback
+        showToast(
+          context,
+          'Operador sem Acesso!',
+          ERROR_TYPE_TOAST,
+          null,
+          null,
+        );
+
+        // Logout
+        await _auth.signOut();
+        Navigator.pushNamed(context, Routes.LOGIN_ROUTE);
+      }
+    });
   }
 
   @override

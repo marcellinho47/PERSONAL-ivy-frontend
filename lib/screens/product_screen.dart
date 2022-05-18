@@ -152,12 +152,41 @@ class _ProductScreenState extends State<ProductScreen> {
       return;
     }
 
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Atenção"),
+          content: const Text("Deseja realmente excluir o registro?"),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text("Excluir"),
+              onPressed: () {
+                _delete();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _delete() {
     _productRepo.deleteAll(_listProduct
         .where((element) => element.isSelect)
         .map((e) => e.idProduct!)
         .toList());
 
-    _cleanForm();
+    setState(() {
+      _cleanForm();
+    });
 
     showToast(context, SUCESS_TYPE_TOAST, "Produtos excluídos com sucesso.",
         null, null);
