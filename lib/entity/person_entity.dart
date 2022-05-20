@@ -14,18 +14,19 @@ class PersonEntity {
   Timestamp? birthday;
   List<ContactEntity?>? listContact;
   List<PersonAdressEntity?>? listPersonAdress;
+  bool isSelect;
 
-  PersonEntity({
-    this.idPerson,
-    this.name,
-    this.personType,
-    this.cpf,
-    this.cnpj,
-    this.sex,
-    this.birthday,
-    this.listContact,
-    this.listPersonAdress,
-  });
+  PersonEntity(
+      {this.idPerson,
+      this.name,
+      this.personType,
+      this.cpf,
+      this.cnpj,
+      this.sex,
+      this.birthday,
+      this.listContact,
+      this.listPersonAdress,
+      this.isSelect = false});
 
   factory PersonEntity.fromDocument(DocumentSnapshot doc) {
     return PersonEntity(

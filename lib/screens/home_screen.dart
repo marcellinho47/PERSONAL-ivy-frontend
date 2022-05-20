@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_auth.currentUser == null) {
       // Logout
       await _auth.signOut();
-      Navigator.pushNamed(context, Routes.LOGIN_ROUTE);
+      Navigator.pushReplacementNamed(context, Routes.LOGIN_ROUTE);
     }
 
     // FIRESTORE
@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // Logout
         await _auth.signOut();
-        Navigator.pushNamed(context, Routes.LOGIN_ROUTE);
+        Navigator.pushReplacementNamed(context, Routes.LOGIN_ROUTE);
       }
     });
   }
