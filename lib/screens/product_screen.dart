@@ -146,7 +146,7 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   void _deleteProduct() {
-    if (_countSelectProduct() > 1) {
+    if (_countSelectProduct() < 1) {
       showToast(context, WARNING_TYPE_TOAST,
           "Selecione ao menos um produto para excluir.", null, null);
       return;
@@ -335,7 +335,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       ),
                       DataColumn(
                         label: Text(
-                          'Habilitado',
+                          'Categoria',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -464,13 +464,13 @@ class ProductDataTableSource extends DataTableSource {
         ),
         DataCell(
           SizedBox(
-            width: 80,
+            width: 240,
             child: Text(_listProduct[index].name ?? ""),
           ),
         ),
         DataCell(
           SizedBox(
-            width: 80,
+            width: 120,
             child: Text(_listProduct[index].category!.description ?? ""),
           ),
         ),

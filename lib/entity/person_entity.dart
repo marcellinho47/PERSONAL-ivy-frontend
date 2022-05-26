@@ -10,11 +10,11 @@ class PersonEntity {
   int? personType;
   String? cpf;
   String? cnpj;
-  int? sex;
+  String? sex;
   Timestamp? birthday;
   List<ContactEntity?>? listContact;
   List<PersonAdressEntity?>? listPersonAdress;
-  bool isSelect;
+  bool isSelect = false;
 
   PersonEntity(
       {this.idPerson,

@@ -9,8 +9,8 @@ class ProductEntity extends InclusionExclusionEntity {
   CategoryEntity? category;
   String? name;
   String? description;
-  bool isSelect;
   List<String> images;
+  bool isSelect = false;
 
   ProductEntity({
     this.idProduct,

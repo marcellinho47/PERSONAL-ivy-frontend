@@ -147,7 +147,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _deleteCategory() {
-    if (_countSelectCategories() != 1) {
+    if (_countSelectCategories() < 1) {
       showToast(context, WARNING_TYPE_TOAST,
           "Selecione ao menos 1 registro para exclusão.", null, null);
       return;

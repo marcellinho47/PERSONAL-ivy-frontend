@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:sys_ivy_frontend/entity/person_entity.dart';
 
 import '../config/routes_config.dart';
@@ -60,7 +59,7 @@ class _ClientScreenState extends State<ClientScreen> {
   }
 
   _deletePerson() {
-    if (_countSelectPerson() > 1) {
+    if (_countSelectPerson() < 1) {
       showToast(context, WARNING_TYPE_TOAST,
           "Selecione ao menos um cliente para excluir.", null, null);
       return;
