@@ -82,9 +82,9 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
 
   void _validForm() {}
 
-  _save() {}
+  void _save() {}
 
-  _cleanForm() {}
+  void _cleanForm() {}
 
   void _addContact() {
     showDialog(
@@ -112,9 +112,9 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
     );
   }
 
-  _deleteContact() {}
+  void _deleteContact() {}
 
-  _addAddress() {}
+  void _addAddress() {}
 
   // ----------------------------------------------------------
   // BUILD

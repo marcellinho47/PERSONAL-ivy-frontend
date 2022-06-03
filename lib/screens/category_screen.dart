@@ -49,7 +49,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return loginBoxWidth;
   }
 
-  _cleanForm() {
+  void _cleanForm() {
     _id.clear();
     _description.clear();
     _cleanList();

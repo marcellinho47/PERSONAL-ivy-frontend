@@ -39,18 +39,15 @@ class _ContactDialogState extends State<ContactDialog> {
     super.initState();
 
     _contact = widget._contactEntity ?? ContactEntity();
-    _contact!.contactType = null;
+    _contact!.contactType = ContactTypeEntity(idContactType: 0);
   }
 
-  List<DropdownMenuItem<ContactTypeEntity>> _dropdownMenuItemsTypeContact() {
-    List<DropdownMenuItem<ContactTypeEntity>> items = [];
+  List<DropdownMenuItem<int>> _dropdownMenuItemsTypeContact() {
+    List<DropdownMenuItem<int>> items = [];
     for (ContactType element in ContactType.values) {
       items.add(
         DropdownMenuItem(
-          value: ContactTypeEntity(
-            idContactType: element.index,
-            description: element.name,
-          ),
+          value: element.index,
           child: Text(element.name),
           alignment: Alignment.centerLeft,
         ),
@@ -60,8 +57,18 @@ class _ContactDialogState extends State<ContactDialog> {
     return items;
   }
 
-  void _onChangedDropdownTypeContact(ContactTypeEntity contactType) {
-    switch (contactType.description) {
+  void _onChangedDropdownTypeContact(int? id) {
+    _contact!.contactType!.idContactType = id;
+
+    print(_contact!.contactType!.idContactType);
+    print(id);
+
+    String desc =
+        ContactType.values.where((element) => element.index == id).first.name;
+
+    _contact!.contactType!.description = desc;
+
+    switch (desc) {
       case "CELULAR_WHATSAPP":
       case "CELULAR":
         _hintText = "62988887777";
@@ -76,9 +83,9 @@ class _ContactDialogState extends State<ContactDialog> {
         _inputType = TextInputType.phone;
         break;
       case "EMAIL":
-        _hintText = "6288887777";
+        _hintText = "email@exemplo.com.br";
         _icon = Icons.email_rounded;
-        _maxLength = 10;
+        _maxLength = 30;
         _inputType = TextInputType.emailAddress;
         break;
       default:
@@ -135,16 +142,18 @@ class _ContactDialogState extends State<ContactDialog> {
       title: const Text("Cadastro / Edição de Contato"),
       content: SizedBox(
         width: 300,
-        height: 300,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            DropdownButton<ContactTypeEntity>(
+            DropdownButton<int>(
               items: _dropdownMenuItemsTypeContact(),
               onChanged: (value) {
-                _onChangedDropdownTypeContact(value!);
+                _onChangedDropdownTypeContact(value);
               },
-              value: _contact!.contactType,
+              value: _contact!.contactType!.idContactType,
+              isExpanded: true,
+              hint: const Text("Tipo de Contato"),
             ),
             TextField(
               decoration: InputDecoration(

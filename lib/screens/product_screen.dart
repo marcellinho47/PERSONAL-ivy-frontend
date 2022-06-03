@@ -40,7 +40,7 @@ class _ProductScreenState extends State<ProductScreen> {
     _fillCategories();
   }
 
-  _cleanForm() {
+  void _cleanForm() {
     _id.clear();
     _description.clear();
     _cleanList();

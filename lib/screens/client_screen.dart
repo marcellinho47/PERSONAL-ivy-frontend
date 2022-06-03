@@ -1,5 +1,6 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sys_ivy_frontend/entity/person_entity.dart';
 
 import '../config/routes_config.dart';
@@ -40,13 +41,13 @@ class _ClientScreenState extends State<ClientScreen> {
     return loginBoxWidth;
   }
 
-  _search() {}
+  void _search() {}
 
-  _addPerson() {
+  void _addPerson() {
     Navigator.pushReplacementNamed(context, Routes.CLIENTS_ADD_EDIT_ROUTE);
   }
 
-  _editPerson() {
+  void _editPerson() {
     if (_countSelectPerson() != 1) {
       showToast(context, WARNING_TYPE_TOAST, "Selecione 1 cliente para editar.",
           null, null);
@@ -58,12 +59,12 @@ class _ClientScreenState extends State<ClientScreen> {
             _listPerson.where((element) => element.isSelect).first.idPerson);
   }
 
-  _deletePerson() {
-    // if (_countSelectPerson() < 1) {
-    //   showToast(context, WARNING_TYPE_TOAST,
-    //       "Selecione ao menos um cliente para excluir.", null, null);
-    //   return;
-    // }
+  void _deletePerson() {
+    if (_countSelectPerson() < 1) {
+      showToast(context, WARNING_TYPE_TOAST,
+          "Selecione ao menos um cliente para excluir.", null, null);
+      return;
+    }
 
     showDialog(
       context: context,
@@ -92,7 +93,7 @@ class _ClientScreenState extends State<ClientScreen> {
     );
   }
 
-  _delete() {}
+  void _delete() {}
 
   void refreshComponent() {
     setState(() {

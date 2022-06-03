@@ -16,17 +16,18 @@ class PersonEntity {
   List<PersonAdressEntity?>? listPersonAdress;
   bool isSelect = false;
 
-  PersonEntity(
-      {this.idPerson,
-      this.name,
-      this.personType,
-      this.cpf,
-      this.cnpj,
-      this.sex,
-      this.birthday,
-      this.listContact,
-      this.listPersonAdress,
-      this.isSelect = false});
+  PersonEntity({
+    this.idPerson,
+    this.name,
+    this.personType,
+    this.cpf,
+    this.cnpj,
+    this.sex,
+    this.birthday,
+    this.listContact,
+    this.listPersonAdress,
+    this.isSelect = false,
+  });
 
   factory PersonEntity.fromDocument(DocumentSnapshot doc) {
     return PersonEntity(
