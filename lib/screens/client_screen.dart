@@ -59,14 +59,15 @@ class _ClientScreenState extends State<ClientScreen> {
   }
 
   _deletePerson() {
-    if (_countSelectPerson() < 1) {
-      showToast(context, WARNING_TYPE_TOAST,
-          "Selecione ao menos um cliente para excluir.", null, null);
-      return;
-    }
+    // if (_countSelectPerson() < 1) {
+    //   showToast(context, WARNING_TYPE_TOAST,
+    //       "Selecione ao menos um cliente para excluir.", null, null);
+    //   return;
+    // }
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Atenção"),

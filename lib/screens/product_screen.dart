@@ -154,6 +154,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Atenção"),

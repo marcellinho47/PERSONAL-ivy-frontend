@@ -119,6 +119,7 @@ class _OperatorState extends State<Operator> {
     // Confirmation
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Atenção"),

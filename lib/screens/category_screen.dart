@@ -155,6 +155,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Atenção"),
