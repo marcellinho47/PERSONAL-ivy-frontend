@@ -21,14 +21,14 @@ class CategoryRepo extends Repo {
   // METHODS
   // ----------------------------------------------------------
   @override
-  deleteAll(List<int> ids) {
+  void deleteAll(List<int> ids) {
     for (int id in ids) {
       delete(id);
     }
   }
 
   @override
-  delete(int id) async {
+  void delete(int id) async {
     CategoryEntity? cat = await findById(id);
 
     if (cat == null) {

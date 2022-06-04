@@ -22,7 +22,7 @@ class OperatorRepo {
   // ----------------------------------------------------------
   // METHODS
   // ----------------------------------------------------------
-  delete(String id) async {
+  void delete(String id) async {
     OperatorEntity? op = await findById(id);
 
     if (op == null) {
@@ -38,7 +38,7 @@ class OperatorRepo {
         .update(op.toJson());
   }
 
-  deleteAll(List<String> ids) {
+  void deleteAll(List<String> ids) {
     for (String id in ids) {
       delete(id);
     }

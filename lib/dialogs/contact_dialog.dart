@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/entity/contact_entity.dart';
 import 'package:sys_ivy_frontend/enums/contact_type_enum.dart';
@@ -28,7 +30,7 @@ class _ContactDialogState extends State<ContactDialog> {
   TextEditingController _description = TextEditingController();
 
   int _maxLength = 11;
-  String _hintText = "";
+  String _hintText = "62988887777";
   TextInputType _inputType = TextInputType.phone;
   IconData _icon = Icons.phone_enabled_rounded;
   // ----------------------------------------------------------
@@ -39,12 +41,16 @@ class _ContactDialogState extends State<ContactDialog> {
     super.initState();
 
     _contact = widget._contactEntity ?? ContactEntity();
-    _contact!.contactType = ContactTypeEntity(idContactType: 0);
+
+    _contact!.contactType = ContactTypeEntity(
+      idContactType: ContactTypeEnum.WHATSAPP.index,
+      description: ContactTypeEnum.WHATSAPP.name,
+    );
   }
 
   List<DropdownMenuItem<int>> _dropdownMenuItemsTypeContact() {
     List<DropdownMenuItem<int>> items = [];
-    for (ContactType element in ContactType.values) {
+    for (ContactTypeEnum element in ContactTypeEnum.values) {
       items.add(
         DropdownMenuItem(
           value: element.index,
@@ -58,18 +64,16 @@ class _ContactDialogState extends State<ContactDialog> {
   }
 
   void _onChangedDropdownTypeContact(int? id) {
+    String desc = ContactTypeEnum.values
+        .where((element) => element.index == id)
+        .first
+        .name;
+
     _contact!.contactType!.idContactType = id;
-
-    print(_contact!.contactType!.idContactType);
-    print(id);
-
-    String desc =
-        ContactType.values.where((element) => element.index == id).first.name;
-
     _contact!.contactType!.description = desc;
 
     switch (desc) {
-      case "CELULAR_WHATSAPP":
+      case "WHATSAPP":
       case "CELULAR":
         _hintText = "62988887777";
         _icon = Icons.phone_enabled_rounded;
@@ -85,7 +89,7 @@ class _ContactDialogState extends State<ContactDialog> {
       case "EMAIL":
         _hintText = "email@exemplo.com.br";
         _icon = Icons.email_rounded;
-        _maxLength = 30;
+        _maxLength = 50;
         _inputType = TextInputType.emailAddress;
         break;
       default:
@@ -103,15 +107,17 @@ class _ContactDialogState extends State<ContactDialog> {
     }
 
     switch (_contact!.contactType!.description) {
-      case "CELULAR_WHATSAPP":
+      case "WHATSAPP":
       case "CELULAR":
-        if (_description.text.length != _maxLength) {
+        if (_description.text.length != _maxLength ||
+            !UtilFunctions.isNumeric(_description.text)) {
           showToast(context, WARNING_TYPE_TOAST, "Celular inválido", 2, null);
           return;
         }
         break;
       case "TELEFONE":
-        if (_description.text.length != _maxLength) {
+        if (_description.text.length != _maxLength ||
+            !UtilFunctions.isNumeric(_description.text)) {
           showToast(context, WARNING_TYPE_TOAST, "Telefone inválido", 2, null);
           return;
         }
@@ -129,8 +135,30 @@ class _ContactDialogState extends State<ContactDialog> {
   }
 
   void _save() {
-    _contact!.description = _description.text;
+    switch (_contact!.contactType!.description) {
+      case "WHATSAPP":
+      case "CELULAR":
+      case "TELEFONE":
+        _contact!.description = formatMobile();
+        break;
+      case "EMAIL":
+        _contact!.description = _description.text.toLowerCase().trim();
+        break;
+    }
+
     Navigator.of(context).pop(_contact);
+  }
+
+  String formatMobile() {
+    String mobile = _description.text;
+    if (mobile.length == 10) {
+      mobile =
+          "(${mobile.substring(0, 2)}) ${mobile.substring(2, 6)}-${mobile.substring(6, 10)}";
+    } else {
+      mobile =
+          "(${mobile.substring(0, 2)}) ${mobile.substring(2, 7)}-${mobile.substring(7, 11)}";
+    }
+    return mobile;
   }
 
   // ----------------------------------------------------------

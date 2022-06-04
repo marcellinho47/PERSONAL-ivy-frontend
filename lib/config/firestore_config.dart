@@ -4,4 +4,6 @@ class DaoConfig {
   static const String OPERATOR_COLLECTION = "operators";
   static const String CATEGORY_COLLECTION = "categories";
   static const String PRODUCT_COLLECTION = "products";
+  static const String CLIENTS_COLLECTION = "clients";
+  static const String ADDRESS_COLLECTION = "addresses";
 }

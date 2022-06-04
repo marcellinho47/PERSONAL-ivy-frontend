@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sys_ivy_frontend/dialogs/adress_dialog.dart';
 import 'package:sys_ivy_frontend/dialogs/contact_dialog.dart';
+import 'package:sys_ivy_frontend/entity/adress_entity.dart';
 
 import '../entity/contact_entity.dart';
+import '../entity/person_adress_entity.dart';
 
 class ClientAddEditScreen extends StatefulWidget {
   final Object? args;
@@ -21,6 +24,9 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
 
   String typePerson = 'CPF';
   String sex = 'F';
+
+  List<ContactEntity?> _listContact = [];
+  List<PersonAdressEntity?> _listPersonAdress = [];
 
   // ----------------------------------------------------------
   // METHODS
@@ -80,7 +86,9 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
     ];
   }
 
-  void _validForm() {}
+  void _validForm() {
+    _save();
+  }
 
   void _save() {}
 
@@ -94,15 +102,18 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
         return const ContactDialog(null);
       },
     ).then((value) {
-      print("then");
+      ContactEntity? contact = value;
+      contact?.idContact = _listContact.length + 1;
+
       if (value != null) {
-        print(value);
+        setState(() {
+          _listContact.add(contact);
+        });
       }
     });
-    ;
   }
 
-  _editContact() {
+  void _editContact(int index) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -112,9 +123,41 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
     );
   }
 
-  void _deleteContact() {}
+  void _deleteContact(int index) {
+    _listContact.removeAt(index);
 
-  void _addAddress() {}
+    for (var contact in _listContact) {
+      contact!.idContact = _listContact.indexOf(contact) + 1;
+    }
+  }
+
+  void _addAdress() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return const AdressDialog(null);
+      },
+    ).then((value) {
+      if (value != null) {
+        _listPersonAdress.add(value);
+      }
+    });
+  }
+
+  void _editAdress(int index) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AdressDialog(AdressEntity());
+      },
+    );
+  }
+
+  void listAdress(int index) {
+    _listPersonAdress.removeAt(index);
+  }
 
   // ----------------------------------------------------------
   // BUILD
@@ -217,40 +260,153 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
             const SizedBox(
               height: 50,
             ),
+            Card(
+              elevation: 4,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.contacts_rounded),
+                    title: const Text(
+                      'Contatos',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.add_circle_outline_rounded,
+                        color: Colors.black,
+                      ),
+                      onPressed: _addContact,
+                    ),
+                  ),
+                  Visibility(
+                    visible: _listContact.isNotEmpty,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                'ID',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Tipo',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                '',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Ações',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return SizedBox(
+                              height: 40,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      _listContact[index]!
+                                          .idContact!
+                                          .toString(),
+                                      style: const TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      _listContact[index]!
+                                          .contactType!
+                                          .description!,
+                                      style: const TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 5,
+                                    child: Text(
+                                      _listContact[index]!.description!,
+                                      style: const TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.edit_rounded),
+                                    onPressed: () {
+                                      _editContact(index);
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete_rounded),
+                                    onPressed: () {
+                                      setState(() {
+                                        _deleteContact(index);
+                                      });
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          itemCount: _listContact.length,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            const SizedBox(
+              height: 50,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      _addContact();
-                    });
-                  },
-                  style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
-                      Text("+ Contato"),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        Icons.whatsapp_rounded,
-                        size: 15,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _addAddress();
+                      _addAdress();
                     });
                   },
                   style: ButtonStyle(

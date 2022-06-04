@@ -23,13 +23,13 @@ class PersonRepo extends Repo {
   // ----------------------------------------------------------
 
   @override
-  delete(int id) {
+  void delete(int id) {
     // TODO: implement delete
     throw UnimplementedError();
   }
 
   @override
-  deleteAll(List<int> ids) {
+  void deleteAll(List<int> ids) {
     // TODO: implement deleteAll
     throw UnimplementedError();
   }

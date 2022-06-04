@@ -26,14 +26,14 @@ class ProductRepo extends Repo {
   // METHODS
   // ----------------------------------------------------------
   @override
-  deleteAll(List<int> ids) {
+  void deleteAll(List<int> ids) {
     for (int id in ids) {
       delete(id);
     }
   }
 
   @override
-  delete(int id) async {
+  void delete(int id) async {
     ProductEntity? pe = await findById(id);
 
     if (pe == null) {
