@@ -118,7 +118,49 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return ContactDialog(ContactEntity());
+        return ContactDialog(_listContact[index]);
+      },
+    ).then((value) {
+      ContactEntity? contact = value;
+
+      if (value != null) {
+        setState(() {
+          _listContact[contact!.idContact! - 1] = contact;
+        });
+      }
+    });
+  }
+
+  void _deleteConfirm(int index, int type) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Atenção"),
+          content: const Text("Deseja realmente excluir o registro?"),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text("Cancelar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text("Excluir"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  if (type == 0) {
+                    _deleteContact(index);
+                  } else {
+                    _deleteAdress(index);
+                  }
+                });
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -155,8 +197,14 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
     );
   }
 
-  void listAdress(int index) {
+  void _deleteAdress(int index) {
     _listPersonAdress.removeAt(index);
+
+    _listPersonAdress.removeAt(index);
+
+    for (var adress in _listPersonAdress) {
+      adress!.idPersonAdress = _listPersonAdress.indexOf(adress) + 1;
+    }
   }
 
   // ----------------------------------------------------------
@@ -374,9 +422,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                                   IconButton(
                                     icon: const Icon(Icons.delete_rounded),
                                     onPressed: () {
-                                      setState(() {
-                                        _deleteContact(index);
-                                      });
+                                      _deleteConfirm(index, 0);
                                     },
                                   ),
                                   const SizedBox(

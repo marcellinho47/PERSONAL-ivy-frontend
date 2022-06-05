@@ -40,12 +40,32 @@ class _ContactDialogState extends State<ContactDialog> {
   void initState() {
     super.initState();
 
+    recover();
+  }
+
+  void recover() {
     _contact = widget._contactEntity ?? ContactEntity();
 
-    _contact!.contactType = ContactTypeEntity(
-      idContactType: ContactTypeEnum.WHATSAPP.index,
-      description: ContactTypeEnum.WHATSAPP.name,
-    );
+    if (_contact!.description != null && _contact!.description!.isNotEmpty) {
+      _onChangedDropdownTypeContact(_contact!.contactType!.idContactType);
+
+      if (_contact!.contactType!.description == ContactTypeEnum.EMAIL.name) {
+        _description.text = _contact!.description!;
+      } else {
+        _description.text = _contact!.description!
+            .replaceAll(RegExp(r'\('), '')
+            .replaceAll(RegExp(r'\)'), '')
+            .replaceAll(RegExp(r' '), '')
+            .replaceAll(RegExp(r'-'), '');
+      }
+    }
+
+    if (_contact!.contactType == null) {
+      _contact!.contactType = ContactTypeEntity(
+        idContactType: ContactTypeEnum.WHATSAPP.index,
+        description: ContactTypeEnum.WHATSAPP.name,
+      );
+    }
   }
 
   List<DropdownMenuItem<int>> _dropdownMenuItemsTypeContact() {
