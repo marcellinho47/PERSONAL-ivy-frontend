@@ -3,17 +3,17 @@ import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdressTypeEntity {
-  int? idAdressTypeEntity;
+  int? idAdressType;
   String? description;
 
   AdressTypeEntity({
-    this.idAdressTypeEntity,
+    this.idAdressType,
     this.description,
   });
 
   factory AdressTypeEntity.fromDocument(DocumentSnapshot doc) {
     return AdressTypeEntity(
-      idAdressTypeEntity: int.parse(doc.id),
+      idAdressType: int.parse(doc.id),
       description: doc.get("description"),
     );
   }
@@ -21,13 +21,13 @@ class AdressTypeEntity {
   factory AdressTypeEntity.fromLinkedHashMap(
       LinkedHashMap<String, dynamic> doc) {
     return AdressTypeEntity(
-      idAdressTypeEntity: int.parse(doc['idAdressTypeEntity'].toString()),
+      idAdressType: int.parse(doc['idAdressType'].toString()),
       description: doc['description'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'idAdressTypeEntity': idAdressTypeEntity,
+        'idAdressType': idAdressType,
         'description': description,
       };
 }

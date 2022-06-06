@@ -1,6 +1,9 @@
 // ignore_for_file: constant_identifier_names
 
 enum StreetTypeEnum {
+  AVENIDA,
+  RUA,
+  ALAMEDA,
   AREA,
   ACESSO,
   ACAMPAMENTO,
@@ -8,7 +11,6 @@ enum StreetTypeEnum {
   ADRO,
   AREA_ESPECIAL,
   AEROPORTO,
-  ALAMEDA,
   AVENIDA_MARINAL_DIREITA,
   AVENIDA_MARGINAL_ESQUERDA,
   ANEL_VIARIO,
@@ -17,7 +19,6 @@ enum StreetTypeEnum {
   ALTO,
   ATALHO,
   AREA_VERDE,
-  AVENIDA,
   AVENIDA_CONTORNO,
   AVENIDA_MARGINAL,
   AVENIDA_VELHA,
@@ -78,7 +79,7 @@ enum StreetTypeEnum {
   ELEVADA,
   EIXO_INDUSTRIAL,
   FAVELA,
-  FAzENDA,
+  FAZENDA,
   FERROVIA,
   FONTE,
   FEIRA,
@@ -128,7 +129,6 @@ enum StreetTypeEnum {
   QUADRA,
   QUINTA,
   QUINTAS,
-  RUA,
   RUA_INTEGRACAO,
   RUA_DE_LIGACAO,
   RUA_PARTICULAR,

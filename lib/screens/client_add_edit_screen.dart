@@ -1,7 +1,8 @@
+import 'package:cpf_cnpj_validator/cpf_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:sys_ivy_frontend/dialogs/adress_dialog.dart';
 import 'package:sys_ivy_frontend/dialogs/contact_dialog.dart';
-import 'package:sys_ivy_frontend/entity/adress_entity.dart';
+import 'package:sys_ivy_frontend/dialogs/person_adress_dialog.dart';
+import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 import '../entity/contact_entity.dart';
 import '../entity/person_adress_entity.dart';
@@ -21,6 +22,10 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
   // ----------------------------------------------------------
   Object? _args;
   final _formKey = GlobalKey<FormState>();
+  TextEditingController _id = TextEditingController();
+  TextEditingController _name = TextEditingController();
+  TextEditingController _cpfCNPJ = TextEditingController();
+  TextEditingController _birthday = TextEditingController();
 
   String typePerson = 'CPF';
   String sex = 'F';
@@ -51,6 +56,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
   void _onChangedDropdownTaxId(String? typePersonValue) {
     setState(() {
       typePerson = typePersonValue ?? 'CPF';
+      _cpfCNPJ.clear();
     });
   }
 
@@ -87,12 +93,44 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
   }
 
   void _validForm() {
+    if (!_formKey.currentState!.validate()) {
+      showToast(
+          context, WARNING_TYPE_TOAST, "Contém inconsistências!", null, null);
+      return;
+    }
+
+    if (_name.text.isEmpty) {
+      showToast(context, WARNING_TYPE_TOAST, "Nome obrigatório", null, null);
+      return;
+    }
+
+    if (typePerson == 'CPF' &&
+        _cpfCNPJ.text.isNotEmpty &&
+        !CPFValidator.isValid(_cpfCNPJ.text)) {
+      showToast(context, WARNING_TYPE_TOAST, "CPF inválido!", 2, null);
+      return;
+    }
+
+    if (typePerson == 'CNPJ' &&
+        _cpfCNPJ.text.isNotEmpty &&
+        !CPFValidator.isValid(_cpfCNPJ.text)) {
+      showToast(context, WARNING_TYPE_TOAST, "CNPJ inválido!", 2, null);
+      return;
+    }
+
     _save();
   }
 
   void _save() {}
 
-  void _cleanForm() {}
+  void _cleanForm() {
+    _listContact = [];
+    _listPersonAdress = [];
+
+    setState(() {
+      _formKey.currentState!.reset();
+    });
+  }
 
   void _addContact() {
     showDialog(
@@ -168,7 +206,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
   void _deleteContact(int index) {
     _listContact.removeAt(index);
 
-    for (var contact in _listContact) {
+    for (ContactEntity? contact in _listContact) {
       contact!.idContact = _listContact.indexOf(contact) + 1;
     }
   }
@@ -178,11 +216,16 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return const AdressDialog(null);
+        return const PersonAdressDialog(null);
       },
     ).then((value) {
+      PersonAdressEntity? personAdress = value;
+      personAdress?.idPersonAdress = _listContact.length + 1;
+
       if (value != null) {
-        _listPersonAdress.add(value);
+        setState(() {
+          _listPersonAdress.add(personAdress);
+        });
       }
     });
   }
@@ -192,17 +235,23 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return AdressDialog(AdressEntity());
+        return PersonAdressDialog(_listPersonAdress[index]);
       },
-    );
+    ).then((value) {
+      PersonAdressEntity? adressEntity = value;
+
+      if (value != null) {
+        setState(() {
+          _listPersonAdress[adressEntity!.idPersonAdress! - 1] = adressEntity;
+        });
+      }
+    });
   }
 
   void _deleteAdress(int index) {
     _listPersonAdress.removeAt(index);
 
-    _listPersonAdress.removeAt(index);
-
-    for (var adress in _listPersonAdress) {
+    for (PersonAdressEntity? adress in _listPersonAdress) {
       adress!.idPersonAdress = _listPersonAdress.indexOf(adress) + 1;
     }
   }
@@ -230,6 +279,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       TextFormField(
+                        controller: _id,
                         decoration: const InputDecoration(
                           hintText: "",
                           labelText: "ID Cliente",
@@ -239,6 +289,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                         enabled: false,
                       ),
                       TextFormField(
+                        controller: _name,
                         decoration: const InputDecoration(
                           hintText: "",
                           labelText: "Nome",
@@ -269,6 +320,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                                   height: 18,
                                 ),
                                 TextFormField(
+                                  controller: _cpfCNPJ,
                                   decoration: InputDecoration(
                                     hintText: "",
                                     labelText: typePerson,
@@ -292,6 +344,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                         },
                       ),
                       TextFormField(
+                        controller: _birthday,
                         keyboardType: TextInputType.datetime,
                         decoration: const InputDecoration(
                           hintText: "01/01/2000",
@@ -443,39 +496,144 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
             const SizedBox(
               height: 50,
             ),
+            Card(
+              elevation: 4,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.location_on_rounded),
+                    title: const Text(
+                      'Endereços',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.add_circle_outline_rounded,
+                        color: Colors.black,
+                      ),
+                      onPressed: _addAdress,
+                    ),
+                  ),
+                  Visibility(
+                    visible: _listPersonAdress.isNotEmpty,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                'ID',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Tipo',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                'Logradouro',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Ações',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return SizedBox(
+                              height: 40,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      _listPersonAdress[index]!
+                                          .idPersonAdress!
+                                          .toString(),
+                                      style: const TextStyle(fontSize: 16),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      _listPersonAdress[index]!
+                                          .adressType!
+                                          .description!,
+                                      style: const TextStyle(fontSize: 12),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 5,
+                                    child: Text(
+                                      _listPersonAdress[index]!.adress!.street!,
+                                      style: const TextStyle(fontSize: 12),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.edit_rounded),
+                                    onPressed: () {
+                                      _editAdress(index);
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete_rounded),
+                                    onPressed: () {
+                                      _deleteConfirm(index, 1);
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          itemCount: _listPersonAdress.length,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(
               height: 50,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _addAdress();
-                    });
-                  },
-                  style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
-                      Text("+ Endereço"),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      Icon(
-                        Icons.home_rounded,
-                        size: 15,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
                 ElevatedButton(
                   onPressed: () {
                     setState(() {
