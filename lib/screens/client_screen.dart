@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/entity/person_entity.dart';
+import 'package:sys_ivy_frontend/repos/person_repo.dart';
 
 import '../config/routes_config.dart';
 import '../utils/toasts.dart';
@@ -23,6 +24,8 @@ class _ClientScreenState extends State<ClientScreen> {
 
   List<PersonEntity> _listPerson = [];
 
+  PersonRepo _personRepo = PersonRepo();
+
   // ----------------------------------------------------------
   // METHODS
   // ----------------------------------------------------------
@@ -41,7 +44,13 @@ class _ClientScreenState extends State<ClientScreen> {
     return loginBoxWidth;
   }
 
-  void _search() {}
+  void _search() {
+    _personRepo.findAll().then((listPerson) {
+      setState(() {
+        _listPerson = listPerson;
+      });
+    });
+  }
 
   void _addPerson() {
     Navigator.pushReplacementNamed(context, Routes.CLIENTS_ADD_EDIT_ROUTE);
@@ -54,9 +63,12 @@ class _ClientScreenState extends State<ClientScreen> {
       return;
     }
 
-    Navigator.pushReplacementNamed(context, Routes.PRODUCTS_ADD_EDIT_ROUTE,
-        arguments:
-            _listPerson.where((element) => element.isSelect).first.idPerson);
+    Navigator.pushReplacementNamed(
+      context,
+      Routes.PRODUCTS_ADD_EDIT_ROUTE,
+      arguments:
+          _listPerson.where((element) => element.isSelect).first.idPerson,
+    );
   }
 
   void _deletePerson() {
@@ -93,7 +105,22 @@ class _ClientScreenState extends State<ClientScreen> {
     );
   }
 
-  void _delete() {}
+  void _delete() {
+    _personRepo.deleteAll(
+      _listPerson
+          .where((element) => element.isSelect)
+          .map((e) => e.idPerson!)
+          .toList(),
+    );
+
+    showToast(
+      context,
+      SUCESS_TYPE_TOAST,
+      "Registros excluídos com sucesso!",
+      null,
+      null,
+    );
+  }
 
   void refreshComponent() {
     setState(() {

@@ -1,7 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cpf_cnpj_validator/cnpj_validator.dart';
 import 'package:cpf_cnpj_validator/cpf_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:sys_ivy_frontend/config/routes_config.dart';
 import 'package:sys_ivy_frontend/dialogs/contact_dialog.dart';
 import 'package:sys_ivy_frontend/dialogs/person_adress_dialog.dart';
+import 'package:sys_ivy_frontend/entity/person_entity.dart';
+import 'package:sys_ivy_frontend/repos/person_repo.dart';
+import 'package:sys_ivy_frontend/utils/functions.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
 
 import '../entity/contact_entity.dart';
@@ -20,15 +27,15 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
   // ----------------------------------------------------------
   // VARIABLES
   // ----------------------------------------------------------
-  Object? _args;
+
   final _formKey = GlobalKey<FormState>();
   TextEditingController _id = TextEditingController();
   TextEditingController _name = TextEditingController();
   TextEditingController _cpfCNPJ = TextEditingController();
   TextEditingController _birthday = TextEditingController();
 
-  String typePerson = 'CPF';
-  String sex = 'F';
+  String _personType = 'CPF';
+  String _sex = 'F';
 
   List<ContactEntity?> _listContact = [];
   List<PersonAdressEntity?> _listPersonAdress = [];
@@ -40,7 +47,32 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
   void initState() {
     super.initState();
 
-    _args = widget.args;
+    recoverEdit();
+  }
+
+  void recoverEdit() {
+    if (widget.args != null) {
+      PersonEntity personEntity = widget.args as PersonEntity;
+
+      _id.text = personEntity.idPerson.toString();
+      _name.text = personEntity.name!;
+      _personType = personEntity.personType ?? 'CPF';
+      _sex = personEntity.sex!;
+
+      if (personEntity.birthday != null) {
+        _birthday.text =
+            DateFormat("ddMMyyyy").format(personEntity.birthday!.toDate());
+      }
+
+      if (_personType.contains('CPF')) {
+        _cpfCNPJ.text = personEntity.cpf ?? "";
+      } else {
+        _cpfCNPJ.text = personEntity.cnpj ?? "";
+      }
+
+      _listContact = personEntity.listContact ?? [];
+      _listPersonAdress = personEntity.listPersonAdress ?? [];
+    }
   }
 
   double _boxWidth(double _screenWidth) {
@@ -55,7 +87,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
 
   void _onChangedDropdownTaxId(String? typePersonValue) {
     setState(() {
-      typePerson = typePersonValue ?? 'CPF';
+      _personType = typePersonValue ?? 'CPF';
       _cpfCNPJ.clear();
     });
   }
@@ -75,7 +107,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
 
   void _onChangedDropdownSex(String? sexValue) {
     setState(() {
-      sex = sexValue ?? 'F';
+      _sex = sexValue ?? 'F';
     });
   }
 
@@ -104,24 +136,63 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
       return;
     }
 
-    if (typePerson == 'CPF' &&
+    if (_personType == 'CPF' &&
         _cpfCNPJ.text.isNotEmpty &&
         !CPFValidator.isValid(_cpfCNPJ.text)) {
       showToast(context, WARNING_TYPE_TOAST, "CPF inválido!", 2, null);
       return;
     }
 
-    if (typePerson == 'CNPJ' &&
+    if (_personType == 'CNPJ' &&
         _cpfCNPJ.text.isNotEmpty &&
-        !CPFValidator.isValid(_cpfCNPJ.text)) {
+        !CNPJValidator.isValid(_cpfCNPJ.text)) {
       showToast(context, WARNING_TYPE_TOAST, "CNPJ inválido!", 2, null);
+      return;
+    }
+
+    if (_birthday.text.isNotEmpty && !UtilFunctions.isNumeric(_birthday.text)) {
+      showToast(
+          context, WARNING_TYPE_TOAST, "Data de nascimento inválida!", 2, null);
       return;
     }
 
     _save();
   }
 
-  void _save() {}
+  void _save() {
+    DateTime? birth;
+    if (_birthday.text.isNotEmpty) {
+      birth = DateTime(
+        int.parse(_birthday.text.substring(4, 8)),
+        int.parse(_birthday.text.substring(2, 4)),
+        int.parse(_birthday.text.substring(0, 2)),
+      );
+    }
+
+    PersonEntity personEntity = PersonEntity(
+      idPerson: int.tryParse(_id.text),
+      name: _name.text,
+      personType: _personType,
+      sex: _sex,
+      cpf: _personType == 'CPF' ? _cpfCNPJ.text : null,
+      cnpj: _personType == 'CNPJ' ? _cpfCNPJ.text : null,
+      birthday: birth != null ? Timestamp.fromDate(birth) : null,
+      listContact: _listContact,
+      listPersonAdress: _listPersonAdress,
+    );
+
+    PersonRepo().save(personEntity);
+
+    showToast(
+      context,
+      SUCESS_TYPE_TOAST,
+      "Cliente salvo com sucesso!",
+      null,
+      null,
+    );
+
+    Navigator.pushReplacementNamed(context, Routes.CLIENTS_ROUTE);
+  }
 
   void _cleanForm() {
     _listContact = [];
@@ -303,7 +374,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                             flex: 2,
                             child: DropdownButtonFormField<String>(
                               items: _dropdownMenuItemsTaxId(),
-                              value: typePerson,
+                              value: _personType,
                               onChanged: (value) {
                                 _onChangedDropdownTaxId(value);
                               },
@@ -323,12 +394,12 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                                   controller: _cpfCNPJ,
                                   decoration: InputDecoration(
                                     hintText: "",
-                                    labelText: typePerson,
+                                    labelText: _personType,
                                     suffixIcon:
                                         const Icon(Icons.text_fields_rounded),
                                   ),
                                   keyboardType: TextInputType.text,
-                                  maxLength: typePerson == 'CPF' ? 11 : 14,
+                                  maxLength: _personType == 'CPF' ? 11 : 14,
                                 ),
                               ],
                             ),
@@ -337,7 +408,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                       ),
                       DropdownButtonFormField<String>(
                         items: _dropdownMenuItemsSex(),
-                        value: sex,
+                        value: _sex,
                         hint: const Text("Sexo:"),
                         onChanged: (value) {
                           _onChangedDropdownSex(value);

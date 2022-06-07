@@ -8,6 +8,8 @@ class ConfirmationDialog extends StatefulWidget {
 }
 
 class _ConfirmationDialogState extends State<ConfirmationDialog> {
+// TODO CREATE THE CLASS AND REFACTOR THE CODE
+
   @override
   Widget build(BuildContext context) {
     return Container();

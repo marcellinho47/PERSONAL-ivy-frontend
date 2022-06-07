@@ -4,10 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sys_ivy_frontend/entity/contact_entity.dart';
 import 'package:sys_ivy_frontend/entity/person_adress_entity.dart';
 
-class PersonEntity {
+import 'inclusion_exclusion_entity.dart';
+
+class PersonEntity extends InclusionExclusionEntity {
   int? idPerson;
   String? name;
-  int? personType;
+  String? personType;
   String? cpf;
   String? cnpj;
   String? sex;
@@ -27,7 +29,16 @@ class PersonEntity {
     this.listContact,
     this.listPersonAdress,
     this.isSelect = false,
-  });
+    idOperatorInclusion,
+    inclusionDate,
+    idOperatorExclusion,
+    exclusionDate,
+  }) : super(
+          idOperatorInclusion: idOperatorInclusion,
+          inclusionDate: inclusionDate,
+          idOperatorExclusion: idOperatorExclusion,
+          exclusionDate: exclusionDate,
+        );
 
   factory PersonEntity.fromDocument(DocumentSnapshot doc) {
     return PersonEntity(
@@ -38,14 +49,20 @@ class PersonEntity {
       cnpj: doc.get('cnpj'),
       sex: doc.get('sex'),
       birthday: doc.get('birthday'),
-      listContact: doc
-          .get('listContact')
-          .map((e) => ContactEntity.fromLinkedHashMap(e))
-          .toList(),
-      listPersonAdress: doc
-          .get('listPersonAdress')
-          .map((e) => PersonAdressEntity.fromLinkedHashMap(e))
-          .toList(),
+      listContact: (doc.get("listContact") as List<dynamic>).isEmpty
+          ? []
+          : (doc.get("listContact") as List<dynamic>)
+              .map((e) => ContactEntity.fromLinkedHashMap(e))
+              .toList(),
+      listPersonAdress: (doc.get("listPersonAdress") as List<dynamic>).isEmpty
+          ? []
+          : (doc.get("listPersonAdress") as List<dynamic>)
+              .map((e) => PersonAdressEntity.fromLinkedHashMap(e))
+              .toList(),
+      idOperatorExclusion: doc.get("idOperatorExclusion"),
+      exclusionDate: doc.get("exclusionDate"),
+      idOperatorInclusion: doc.get("idOperatorInclusion"),
+      inclusionDate: doc.get("inclusionDate"),
     );
   }
 
@@ -64,6 +81,10 @@ class PersonEntity {
       listPersonAdress: map['listPersonAdress']
           .map((e) => PersonAdressEntity.fromLinkedHashMap(e))
           .toList(),
+      idOperatorExclusion: map['idOperatorExclusion'],
+      exclusionDate: map['exclusionDate'],
+      idOperatorInclusion: map['idOperatorInclusion'],
+      inclusionDate: map['inclusionDate'],
     );
   }
 
@@ -78,6 +99,10 @@ class PersonEntity {
       'birthday': birthday,
       'listContact': listContact?.map((e) => e?.toJson()).toList(),
       'listPersonAdress': listPersonAdress?.map((e) => e?.toJson()).toList(),
+      'idOperatorInclusion': idOperatorInclusion,
+      'inclusionDate': inclusionDate,
+      'idOperatorExclusion': idOperatorExclusion,
+      'exclusionDate': exclusionDate,
     };
   }
 }
