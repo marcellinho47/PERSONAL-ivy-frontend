@@ -291,7 +291,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
       },
     ).then((value) {
       PersonAdressEntity? personAdress = value;
-      personAdress?.idPersonAdress = _listContact.length + 1;
+      personAdress?.idPersonAdress = _listPersonAdress.length + 1;
 
       if (value != null) {
         setState(() {

@@ -65,9 +65,8 @@ class _ClientScreenState extends State<ClientScreen> {
 
     Navigator.pushReplacementNamed(
       context,
-      Routes.PRODUCTS_ADD_EDIT_ROUTE,
-      arguments:
-          _listPerson.where((element) => element.isSelect).first.idPerson,
+      Routes.CLIENTS_ADD_EDIT_ROUTE,
+      arguments: _listPerson.where((element) => element.isSelect).first,
     );
   }
 
@@ -250,6 +249,7 @@ class _ClientScreenState extends State<ClientScreen> {
                     showFirstLastButtons: true,
                     showCheckboxColumn: true,
                     checkboxHorizontalMargin: 20,
+                    columnSpacing: 20,
                     columns: const <DataColumn>[
                       DataColumn(
                         label: Text(
@@ -259,13 +259,25 @@ class _ClientScreenState extends State<ClientScreen> {
                       ),
                       DataColumn(
                         label: Text(
-                          'Descrição',
+                          'Nome',
                           textAlign: TextAlign.center,
                         ),
                       ),
                       DataColumn(
                         label: Text(
-                          'Habilitado',
+                          'Sexo',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Contatos',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Endereços',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -387,21 +399,44 @@ class ClientDataTableSource extends DataTableSource {
       index: index,
       cells: <DataCell>[
         DataCell(
-          SizedBox(
-            width: 80,
-            child: Text(_listPerson[index].idPerson.toString()),
+          Center(
+            child: Text(
+              _listPerson[index].idPerson.toString(),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
         DataCell(
           SizedBox(
-            width: 80,
-            child: Text(_listPerson[index].name ?? ""),
+            width: 280,
+            child: Text(
+              _listPerson[index].name!,
+              textAlign: TextAlign.start,
+            ),
           ),
         ),
         DataCell(
-          SizedBox(
-            width: 80,
-            child: Text(_listPerson[index].cpf ?? _listPerson[index].cnpj!),
+          Center(
+            child: Text(
+              _listPerson[index].sex!,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        DataCell(
+          Center(
+            child: Text(
+              _listPerson[index].listContact!.length.toString(),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        DataCell(
+          Center(
+            child: Text(
+              _listPerson[index].listPersonAdress!.length.toString(),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ],
