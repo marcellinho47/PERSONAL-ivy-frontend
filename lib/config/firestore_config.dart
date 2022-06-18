@@ -6,4 +6,5 @@ class DaoConfig {
   static const String PRODUCT_COLLECTION = "products";
   static const String CLIENTS_COLLECTION = "clients";
   static const String ADDRESS_COLLECTION = "addresses";
+  static const String CITY_COLLECTION = 'cities';
 }

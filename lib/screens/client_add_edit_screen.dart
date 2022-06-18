@@ -1,9 +1,12 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cpf_cnpj_validator/cnpj_validator.dart';
 import 'package:cpf_cnpj_validator/cpf_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sys_ivy_frontend/config/routes_config.dart';
+import 'package:sys_ivy_frontend/dialogs/confirmation_dialog.dart';
 import 'package:sys_ivy_frontend/dialogs/contact_dialog.dart';
 import 'package:sys_ivy_frontend/dialogs/person_adress_dialog.dart';
 import 'package:sys_ivy_frontend/entity/person_entity.dart';
@@ -245,33 +248,17 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Atenção"),
-          content: const Text("Deseja realmente excluir o registro?"),
-          actions: <Widget>[
-            ElevatedButton(
-              child: const Text("Cancelar"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            ElevatedButton(
-              child: const Text("Excluir"),
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  if (type == 0) {
-                    _deleteContact(index);
-                  } else {
-                    _deleteAdress(index);
-                  }
-                });
-              },
-            ),
-          ],
-        );
+        return const ConfirmationDialog(null, null, null);
       },
-    );
+    ).then((value) {
+      if (value) {
+        if (type == 0) {
+          _deleteContact(index);
+        } else {
+          _deleteAdress(index);
+        }
+      }
+    });
   }
 
   void _deleteContact(int index) {

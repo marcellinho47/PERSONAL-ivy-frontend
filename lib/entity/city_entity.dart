@@ -1,43 +1,42 @@
 import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sys_ivy_frontend/entity/state_entity.dart';
 
 class CityEntity {
   int? idCity;
-  int? idIBGE;
   String? name;
-  StateEntity? state;
+  String? state;
+  String? country;
 
   CityEntity({
     this.idCity,
-    this.idIBGE,
     this.name,
     this.state,
+    this.country,
   });
 
   factory CityEntity.fromDocument(DocumentSnapshot doc) {
     return CityEntity(
       idCity: int.parse(doc.id),
-      idIBGE: doc.get("idIBGE"),
-      name: doc.get("name"),
-      state: StateEntity.fromLinkedHashMap(doc.get("state")),
+      name: doc.get('name'),
+      state: doc.get('state'),
+      country: doc.get('country'),
     );
   }
 
   factory CityEntity.fromLinkedHashMap(LinkedHashMap<String, dynamic> doc) {
     return CityEntity(
       idCity: int.parse(doc['idCity'].toString()),
-      idIBGE: doc['idIBGE'],
       name: doc['name'],
-      state: StateEntity.fromLinkedHashMap(doc['state']),
+      state: doc['state'],
+      country: doc['country'],
     );
   }
 
   Map<String, dynamic> toJson() => {
         'idCity': idCity,
-        'idIBGE': idIBGE,
         'name': name,
-        'state': state?.toJson(),
+        'state': state,
+        'country': country,
       };
 }

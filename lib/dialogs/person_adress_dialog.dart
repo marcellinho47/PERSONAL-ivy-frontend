@@ -3,12 +3,17 @@
 import 'package:flutter/material.dart';
 import 'package:sys_ivy_frontend/entity/adress_entity.dart';
 import 'package:sys_ivy_frontend/entity/adress_type_entity.dart';
+import 'package:sys_ivy_frontend/entity/city_entity.dart';
 import 'package:sys_ivy_frontend/entity/person_adress_entity.dart';
 import 'package:sys_ivy_frontend/entity/street_type_entity.dart';
 import 'package:sys_ivy_frontend/enums/adress_type_enum.dart';
+import 'package:sys_ivy_frontend/enums/country_enum.dart';
+import 'package:sys_ivy_frontend/enums/state_enum.dart';
 import 'package:sys_ivy_frontend/enums/street_type_enum.dart';
 import 'package:sys_ivy_frontend/utils/functions.dart';
 import 'package:sys_ivy_frontend/utils/toasts.dart';
+
+import '../repos/city_repo.dart';
 
 class PersonAdressDialog extends StatefulWidget {
   final PersonAdressEntity? _adressEntity;
@@ -36,8 +41,15 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
 
   int _streetTypeId = 0;
   int _adressTypeId = 0;
+  int? _cityId;
+  String _stateId = StateEnum.AC.toString();
+  int _countryId = 0;
 
   PersonAdressEntity _personAdressEntity = PersonAdressEntity();
+  CityRepo _cityRepo = CityRepo();
+
+  List<CityEntity> _cities = [];
+  List<CityEntity> _filteredCities = [];
 
   // ----------------------------------------------------------
   // METHODS
@@ -46,15 +58,34 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
   void initState() {
     super.initState();
 
-    recoverEdit();
+    _recoverCities();
+    _recoverEdit();
   }
 
-  void recoverEdit() {
+  void _recoverCities() {
+    _cityRepo.findAll().then((cities) {
+      setState(() {
+        _cities = cities;
+      });
+    });
+  }
+
+  void _filterCities(String state) {
+    _filteredCities = _cities.where((city) => city.state == state).toList();
+  }
+
+  void _recoverEdit() {
+    // CREATE
     if (widget._adressEntity == null) {
       _personAdressEntity.adress = AdressEntity();
       _personAdressEntity.adress!.streetType = StreetTypeEntity();
       _personAdressEntity.adressType = AdressTypeEntity();
+
+      _cityId = 1; // TODO set gyn
+      _stateId = StateEnum.GO.name;
+      _countryId = CountryEnum.BRAZIL.index;
     } else {
+      // UPDATE
       _personAdressEntity = widget._adressEntity!;
       _street.text = _personAdressEntity.adress!.street!;
 
@@ -70,7 +101,13 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
       _zipcode.text = _personAdressEntity.adress!.zipCode!;
       _streetTypeId = _personAdressEntity.adress!.streetType!.idStreetType!;
       _adressTypeId = _personAdressEntity.adressType!.idAdressType!;
+
+      _cityId = _personAdressEntity.adress!.idCity;
+      _stateId = _personAdressEntity.adress!.state!;
+      _countryId = _personAdressEntity.adress!.country!;
     }
+
+    _filterCities(StateEnum.GO.name);
   }
 
   void _valid() {
@@ -152,13 +189,10 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
 
     for (AdressTypeEnum element in AdressTypeEnum.values) {
       items.add(
-        DropdownMenuItem<int>(
+        DropdownMenuItem(
           value: element.index,
-          child: DropdownMenuItem(
-            value: element.index,
-            child: Text(element.name),
-            alignment: Alignment.centerLeft,
-          ),
+          child: Text(element.name),
+          alignment: Alignment.centerLeft,
         ),
       );
     }
@@ -177,13 +211,76 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
 
     for (StreetTypeEnum element in StreetTypeEnum.values) {
       items.add(
+        DropdownMenuItem(
+          value: element.index,
+          child: Text(element.name),
+          alignment: Alignment.centerLeft,
+        ),
+      );
+    }
+
+    return items;
+  }
+
+  void _onChangedDropdownCity(int value) {
+    setState(() {
+      _cityId = value;
+    });
+  }
+
+  List<DropdownMenuItem<int>>? _dropdownMenuItemCity() {
+    List<DropdownMenuItem<int>> items = [];
+
+    for (CityEntity element in _filteredCities) {
+      items.add(
+        DropdownMenuItem<int>(
+          value: element.idCity,
+          child: Text(element.name!),
+          alignment: Alignment.centerLeft,
+        ),
+      );
+    }
+
+    return items;
+  }
+
+  void _onChangedDropdownState(String value) {
+    setState(() {
+      _stateId = value;
+    });
+  }
+
+  List<DropdownMenuItem<String>>? _dropdownMenuItemState() {
+    List<DropdownMenuItem<String>> items = [];
+
+    for (StateEnum element in StateEnum.values) {
+      items.add(
+        DropdownMenuItem<String>(
+          value: element.name,
+          child: Text(element.name),
+          alignment: Alignment.centerLeft,
+        ),
+      );
+    }
+
+    return items;
+  }
+
+  void _onChangedDropdownCountry(int value) {
+    setState(() {
+      _countryId = value;
+    });
+  }
+
+  List<DropdownMenuItem<int>>? _dropdownMenuItemCountry() {
+    List<DropdownMenuItem<int>> items = [];
+
+    for (CountryEnum element in CountryEnum.values) {
+      items.add(
         DropdownMenuItem<int>(
           value: element.index,
-          child: DropdownMenuItem(
-            value: element.index,
-            child: Text(element.name),
-            alignment: Alignment.centerLeft,
-          ),
+          child: Text(element.name),
+          alignment: Alignment.centerLeft,
         ),
       );
     }
@@ -281,6 +378,36 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
                 keyboardType: TextInputType.number,
                 controller: _zipcode,
                 maxLength: 8,
+              ),
+              DropdownButton<int>(
+                items: _dropdownMenuItemCountry(),
+                onChanged: (value) {
+                  _onChangedDropdownCountry(value!);
+                },
+                value: _countryId,
+                isExpanded: true,
+                menuMaxHeight: 300,
+                hint: const Text("País"),
+              ),
+              DropdownButton<String>(
+                items: _dropdownMenuItemState(),
+                onChanged: (value) {
+                  _onChangedDropdownState(value!);
+                },
+                value: _stateId,
+                isExpanded: true,
+                menuMaxHeight: 300,
+                hint: const Text("Estado"),
+              ),
+              DropdownButton<int>(
+                items: _dropdownMenuItemCity(),
+                onChanged: (value) {
+                  _onChangedDropdownCity(value!);
+                },
+                value: _cityId,
+                isExpanded: true,
+                menuMaxHeight: 300,
+                hint: const Text("Cidade"),
               ),
             ],
           ),
