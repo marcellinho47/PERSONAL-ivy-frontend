@@ -42,14 +42,13 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
   int _streetTypeId = 0;
   int _adressTypeId = 0;
   int? _cityId;
-  String _stateId = StateEnum.AC.toString();
+  String _stateId = StateEnum.GO.name;
   int _countryId = 0;
 
   PersonAdressEntity _personAdressEntity = PersonAdressEntity();
   CityRepo _cityRepo = CityRepo();
 
   List<CityEntity> _cities = [];
-  List<CityEntity> _filteredCities = [];
 
   // ----------------------------------------------------------
   // METHODS
@@ -58,34 +57,27 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
   void initState() {
     super.initState();
 
-    _recoverCities();
     _recoverEdit();
   }
 
-  void _recoverCities() {
-    _cityRepo.findAll().then((cities) {
-      setState(() {
-        _cities = cities;
-      });
-    });
-  }
-
-  void _filterCities(String state) {
-    _filteredCities = _cities.where((city) => city.state == state).toList();
-  }
-
   void _recoverEdit() {
-    // CREATE
     if (widget._adressEntity == null) {
+      // CREATE
+
+      // Creating entities
       _personAdressEntity.adress = AdressEntity();
       _personAdressEntity.adress!.streetType = StreetTypeEntity();
       _personAdressEntity.adressType = AdressTypeEntity();
 
-      _cityId = 1; // TODO set gyn
+      // Sets the default
+      _cityId = 5420;
       _stateId = StateEnum.GO.name;
       _countryId = CountryEnum.BRAZIL.index;
+
+      _filterCities(_stateId);
     } else {
       // UPDATE
+
       _personAdressEntity = widget._adressEntity!;
       _street.text = _personAdressEntity.adress!.street!;
 
@@ -105,9 +97,13 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
       _cityId = _personAdressEntity.adress!.idCity;
       _stateId = _personAdressEntity.adress!.state!;
       _countryId = _personAdressEntity.adress!.country!;
-    }
 
-    _filterCities(StateEnum.GO.name);
+      _filterCities(StateEnum.GO.name);
+    }
+  }
+
+  _filterCities(String state) {
+    _cities = _cityRepo.findAllByState(state);
   }
 
   void _valid() {
@@ -118,8 +114,8 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
     }
 
     if (_number.text.isNotEmpty &&
-        (int.parse(_number.text) == 0) &&
-        !UtilFunctions.isNumeric(_number.text)) {
+        (!UtilFunctions.isNumeric(_number.text) ||
+            (int.parse(_number.text) == 0))) {
       showToast(context, WARNING_TYPE_TOAST,
           "O Número deve ser numérico positivo!", 2, null);
       return;
@@ -146,26 +142,51 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
       return;
     }
 
+    if (_cityId == null) {
+      showToast(context, WARNING_TYPE_TOAST, "Necessário preencher a Cidade!",
+          2, null);
+      return;
+    }
+
+    if (_stateId.isEmpty) {
+      showToast(context, WARNING_TYPE_TOAST, "Necessário preencher o Estado!",
+          2, null);
+      return;
+    }
+
+    if (_countryId < 0) {
+      showToast(
+          context, WARNING_TYPE_TOAST, "Necessário preencher o País!", 2, null);
+      return;
+    }
+
     _save();
   }
 
   void _save() {
+    // Adress
     _personAdressEntity.adress!.number =
         _number.text.isEmpty ? null : int.parse(_number.text);
 
     _personAdressEntity.adress!.zipCode = _zipcode.text;
-
     _personAdressEntity.adress!.street = _street.text;
     _personAdressEntity.adress!.complement = _complement.text;
     _personAdressEntity.adress!.district = _district.text;
 
+    // Street Type
     _personAdressEntity.adress!.streetType!.idStreetType = _streetTypeId;
     _personAdressEntity.adress!.streetType!.description =
         _getStreetTypeDescription(_streetTypeId);
 
+    // Adress Type
     _personAdressEntity.adressType!.idAdressType = _adressTypeId;
     _personAdressEntity.adressType!.description =
         _getAdressTypeDescription(_adressTypeId);
+
+    // City
+    _personAdressEntity.adress!.idCity = _cityId;
+    _personAdressEntity.adress!.state = _stateId;
+    _personAdressEntity.adress!.country = _countryId;
 
     Navigator.pop(context, _personAdressEntity);
   }
@@ -231,7 +252,7 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
   List<DropdownMenuItem<int>>? _dropdownMenuItemCity() {
     List<DropdownMenuItem<int>> items = [];
 
-    for (CityEntity element in _filteredCities) {
+    for (CityEntity element in _cities) {
       items.add(
         DropdownMenuItem<int>(
           value: element.idCity,
@@ -247,6 +268,8 @@ class _PersonAdressDialog extends State<PersonAdressDialog> {
   void _onChangedDropdownState(String value) {
     setState(() {
       _stateId = value;
+      _cityId = null;
+      _filterCities(value);
     });
   }
 

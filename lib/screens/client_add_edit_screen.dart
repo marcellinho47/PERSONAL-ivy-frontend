@@ -251,13 +251,15 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
         return const ConfirmationDialog(null, null, null);
       },
     ).then((value) {
-      if (value) {
-        if (type == 0) {
-          _deleteContact(index);
-        } else {
-          _deleteAdress(index);
+      setState(() {
+        if (value) {
+          if (type == 0) {
+            _deleteContact(index);
+          } else {
+            _deleteAdress(index);
+          }
         }
-      }
+      });
     });
   }
 
@@ -278,7 +280,8 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
       },
     ).then((value) {
       PersonAdressEntity? personAdress = value;
-      personAdress?.idPersonAdress = _listPersonAdress.length + 1;
+      personAdress!.idPersonAdress = _listPersonAdress.length + 1;
+      personAdress.adress!.idAdress = _listPersonAdress.length + 1;
 
       if (value != null) {
         setState(() {
@@ -354,6 +357,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                           suffixIcon: Icon(Icons.text_fields_rounded),
                         ),
                         keyboardType: TextInputType.text,
+                        maxLength: 100,
                       ),
                       Row(
                         children: [
@@ -409,7 +413,7 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                           labelText: "Data de Nascimento",
                           suffixIcon: Icon(Icons.calendar_month_rounded),
                         ),
-                        maxLength: 10,
+                        maxLength: 8,
                       ),
                     ],
                   ),

@@ -10,6 +10,10 @@ class UtilFunctions {
       return false;
     }
 
+    if (int.tryParse(str) == null) {
+      return false;
+    }
+
     if (RegExp(r'[^0-9]').hasMatch(str)) {
       return false;
     }

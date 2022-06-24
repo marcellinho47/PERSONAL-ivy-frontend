@@ -32,7 +32,7 @@ class PersonRepo extends Repo {
       return;
     }
 
-    pe.idOperatorInclusion = _auth.currentUser?.uid;
+    pe.idOperatorExclusion = _auth.currentUser?.uid;
     pe.exclusionDate = Timestamp.now();
 
     _firestore
@@ -52,6 +52,101 @@ class PersonRepo extends Repo {
   Future<List<PersonEntity>> findAll() async {
     QuerySnapshot snapshot =
         await _firestore.collection(DaoConfig.CLIENTS_COLLECTION).get();
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+
+    return snapshot.docs
+        .map((doc) => PersonEntity.fromDocument(doc))
+        .toList()
+        .where((element) => element.exclusionDate == null)
+        .toList();
+  }
+
+  Future<List<PersonEntity>> findByLikeName(String name) async {
+    QuerySnapshot snapshot =
+        await _firestore.collection(DaoConfig.CLIENTS_COLLECTION).get();
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+
+    return snapshot.docs
+        .map((doc) => PersonEntity.fromDocument(doc))
+        .toList()
+        .where((element) => element.exclusionDate == null)
+        .toList()
+        .where((element) => element.name!.toLowerCase().contains(
+              name.toLowerCase().trim(),
+            ))
+        .toList();
+  }
+
+  Future<List<PersonEntity>> findBetweenAge(
+      int? initialAge, int? finalAge) async {
+    QuerySnapshot snapshot =
+        await _firestore.collection(DaoConfig.CLIENTS_COLLECTION).get();
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+
+    List<PersonEntity> people = snapshot.docs
+        .map((doc) => PersonEntity.fromDocument(doc))
+        .toList()
+        .where((element) => element.exclusionDate == null)
+        .toList()
+        .where((element) => element.birthday != null)
+        .toList();
+
+    if (people.isEmpty) {
+      return [];
+    }
+
+    List<PersonEntity> returnPeople = [];
+
+    for (PersonEntity person in people) {
+      int age =
+          DateTime.now().difference(person.birthday!.toDate()).inDays ~/ 365;
+
+      if (initialAge != null &&
+          finalAge != null &&
+          initialAge <= age &&
+          finalAge >= age) {
+        returnPeople.add(person);
+      } else if (initialAge != null && finalAge == null && initialAge <= age) {
+        returnPeople.add(person);
+      } else if (finalAge != null && initialAge == null && finalAge >= age) {
+        returnPeople.add(person);
+      }
+    }
+
+    return returnPeople;
+  }
+
+  Future<List<PersonEntity>> findBySex(String sex) async {
+    QuerySnapshot snapshot = await _firestore
+        .collection(DaoConfig.CLIENTS_COLLECTION)
+        .where('sex', isEqualTo: sex)
+        .get();
+
+    if (snapshot.docs.isEmpty) {
+      return [];
+    }
+
+    return snapshot.docs
+        .map((doc) => PersonEntity.fromDocument(doc))
+        .toList()
+        .where((element) => element.exclusionDate == null)
+        .toList();
+  }
+
+  Future<List<PersonEntity>> findByTaxID(String cpfCnpj) async {
+    QuerySnapshot snapshot = await _firestore
+        .collection(DaoConfig.CLIENTS_COLLECTION)
+        .where('personType', isEqualTo: cpfCnpj)
+        .get();
 
     if (snapshot.docs.isEmpty) {
       return [];

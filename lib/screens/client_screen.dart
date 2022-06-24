@@ -5,7 +5,6 @@ import 'package:sys_ivy_frontend/entity/person_entity.dart';
 import 'package:sys_ivy_frontend/repos/person_repo.dart';
 
 import '../config/routes_config.dart';
-import '../repos/city_repo.dart';
 import '../utils/toasts.dart';
 
 class ClientScreen extends StatefulWidget {
@@ -20,10 +19,12 @@ class _ClientScreenState extends State<ClientScreen> {
   // VARIABLES
   // ----------------------------------------------------------
   TextEditingController _name = TextEditingController();
-  TextEditingController _email = TextEditingController();
-  TextEditingController _celular = TextEditingController();
+  TextEditingController _initialAge = TextEditingController();
+  TextEditingController _finalAge = TextEditingController();
 
   List<PersonEntity> _listPerson = [];
+  String _personType = '';
+  String _sex = '';
 
   PersonRepo _personRepo = PersonRepo();
 
@@ -45,11 +46,22 @@ class _ClientScreenState extends State<ClientScreen> {
     return loginBoxWidth;
   }
 
-  void _search() {
-    _personRepo.findAll().then((listPerson) {
-      setState(() {
-        _listPerson = listPerson;
-      });
+  void _search() async {
+    if (_name.text.isNotEmpty) {
+      _listPerson = await _personRepo.findByLikeName(_name.text);
+    } else if (_personType.isNotEmpty) {
+      _listPerson = await _personRepo.findByTaxID(_personType);
+    } else if (_sex.isNotEmpty) {
+      _listPerson = await _personRepo.findBySex(_sex);
+    } else if (_initialAge.text.isNotEmpty || _finalAge.text.isNotEmpty) {
+      _listPerson = await _personRepo.findBetweenAge(
+          int.tryParse(_initialAge.text), int.tryParse(_finalAge.text));
+    } else {
+      _listPerson = await _personRepo.findAll();
+    }
+
+    setState(() {
+      _listPerson;
     });
   }
 
@@ -120,6 +132,8 @@ class _ClientScreenState extends State<ClientScreen> {
       null,
       null,
     );
+
+    _search();
   }
 
   void refreshComponent() {
@@ -130,6 +144,52 @@ class _ClientScreenState extends State<ClientScreen> {
 
   int _countSelectPerson() {
     return _listPerson.where((element) => element.isSelect).length;
+  }
+
+  void _onChangedDropdownTaxId(String? typePersonValue) {
+    setState(() {
+      _personType = typePersonValue ?? 'CPF';
+    });
+  }
+
+  List<DropdownMenuItem<String>> _dropdownMenuItemsTaxId() {
+    return [
+      const DropdownMenuItem(
+        child: Text(''),
+        value: '',
+      ),
+      const DropdownMenuItem(
+        child: Text('CPF'),
+        value: 'CPF',
+      ),
+      const DropdownMenuItem(
+        child: Text('CNPJ'),
+        value: 'CNPJ',
+      ),
+    ];
+  }
+
+  void _onChangedDropdownSex(String? sexValue) {
+    setState(() {
+      _sex = sexValue ?? '';
+    });
+  }
+
+  List<DropdownMenuItem<String>> _dropdownMenuItemsSex() {
+    return [
+      const DropdownMenuItem(
+        child: Text(''),
+        value: '',
+      ),
+      const DropdownMenuItem(
+        child: Text('Feminino'),
+        value: 'F',
+      ),
+      const DropdownMenuItem(
+        child: Text('Masculino'),
+        value: 'M',
+      ),
+    ];
   }
 
   // ----------------------------------------------------------
@@ -153,53 +213,100 @@ class _ClientScreenState extends State<ClientScreen> {
                     Row(
                       children: [
                         Expanded(
-                          flex: 10,
-                          child: TextField(
-                            controller: _name,
-                            keyboardType: TextInputType.text,
-                            enabled: true,
-                            decoration: const InputDecoration(
-                              hintText: "",
-                              labelText: "Nome",
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 10,
-                          child: TextField(
-                            controller: _email,
-                            keyboardType: TextInputType.emailAddress,
-                            enabled: true,
-                            decoration: const InputDecoration(
-                              hintText: "exemplo@email.com",
-                              labelText: "E-mail",
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
                           flex: 8,
-                          child: TextField(
-                            controller: _celular,
-                            keyboardType: TextInputType.number,
-                            enabled: true,
-                            decoration: const InputDecoration(
-                              hintText: "",
-                              labelText: "Celular",
-                            ),
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 18,
+                              ),
+                              TextField(
+                                controller: _name,
+                                keyboardType: TextInputType.text,
+                                enabled: true,
+                                decoration: const InputDecoration(
+                                  hintText: "",
+                                  labelText: "Nome",
+                                ),
+                                maxLength: 100,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: DropdownButtonFormField<String>(
+                            items: _dropdownMenuItemsTaxId(),
+                            value: _personType,
+                            onChanged: (value) {
+                              _onChangedDropdownTaxId(value);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 18,
+                              ),
+                              TextField(
+                                controller: _initialAge,
+                                keyboardType: TextInputType.number,
+                                enabled: true,
+                                decoration: const InputDecoration(
+                                  hintText: "18",
+                                  labelText: "Faixa Etária",
+                                ),
+                                maxLength: 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 18,
+                              ),
+                              TextField(
+                                controller: _finalAge,
+                                keyboardType: TextInputType.text,
+                                enabled: true,
+                                maxLength: 2,
+                                decoration: const InputDecoration(
+                                  hintText: "26",
+                                  labelText: "",
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: DropdownButtonFormField<String>(
+                            items: _dropdownMenuItemsSex(),
+                            value: _sex,
+                            hint: const Text("Sexo:"),
+                            onChanged: (value) {
+                              _onChangedDropdownSex(value);
+                            },
                           ),
                         ),
                         const SizedBox(
@@ -209,9 +316,7 @@ class _ClientScreenState extends State<ClientScreen> {
                           flex: 2,
                           child: ElevatedButton(
                             onPressed: () {
-                              setState(() {
-                                _search();
-                              });
+                              _search();
                             },
                             style: ButtonStyle(
                               padding: MaterialStateProperty.all(
