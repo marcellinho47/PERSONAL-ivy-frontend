@@ -13,7 +13,7 @@ class CityEntity {
     this.name,
     this.state,
     this.country,
-  });
+  }); 
 
   factory CityEntity.fromDocument(DocumentSnapshot doc) {
     return CityEntity(
