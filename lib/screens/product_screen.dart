@@ -285,12 +285,12 @@ class _ProductScreenState extends State<ProductScreen> {
                               _search();
                             },
                             style: ButtonStyle(
-                              padding: MaterialStateProperty.all(
+                              padding: WidgetStateProperty.all(
                                   const EdgeInsets.all(20)),
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: const [
+                              children: [
                                 Text("Pesquisar"),
                                 SizedBox(
                                   width: 5,
@@ -360,12 +360,11 @@ class _ProductScreenState extends State<ProductScreen> {
                     _addProduct();
                   },
                   style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(20)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Adicionar"),
                       SizedBox(
                         width: 5,
@@ -385,12 +384,11 @@ class _ProductScreenState extends State<ProductScreen> {
                     _editProduct();
                   },
                   style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(20)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Editar"),
                       SizedBox(
                         width: 5,
@@ -410,12 +408,11 @@ class _ProductScreenState extends State<ProductScreen> {
                     _deleteProduct();
                   },
                   style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(20)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Excluir"),
                       SizedBox(
                         width: 5,

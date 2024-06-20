@@ -229,11 +229,11 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
                   },
                   style: ButtonStyle(
                     padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                        WidgetStateProperty.all(const EdgeInsets.all(20.0)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Limpar"),
                       SizedBox(
                         width: 5,
@@ -256,11 +256,11 @@ class _CategoryAddEditScreenState extends State<CategoryAddEditScreen> {
                   },
                   style: ButtonStyle(
                     padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                        WidgetStateProperty.all(const EdgeInsets.all(20.0)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Salvar"),
                       SizedBox(
                         width: 5,

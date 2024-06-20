@@ -423,12 +423,11 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
                     });
                   },
                   style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(20)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Limpar"),
                       SizedBox(
                         width: 5,
@@ -450,12 +449,11 @@ class _OperatorAddEditScreenState extends State<OperatorAddEditScreen> {
                     });
                   },
                   style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(20)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Salvar"),
                       SizedBox(
                         width: 5,

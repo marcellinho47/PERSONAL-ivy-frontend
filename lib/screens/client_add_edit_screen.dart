@@ -453,9 +453,9 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Row(
+                        const Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
+                          children: [
                             Expanded(
                               flex: 1,
                               child: Text(
@@ -588,9 +588,9 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Row(
+                        const Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
+                          children: [
                             Expanded(
                               flex: 1,
                               child: Text(
@@ -704,11 +704,11 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                   },
                   style: ButtonStyle(
                     padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                        WidgetStateProperty.all(const EdgeInsets.all(20.0)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Limpar"),
                       SizedBox(
                         width: 5,
@@ -731,11 +731,11 @@ class _ClientAddEditScreenState extends State<ClientAddEditScreen> {
                   },
                   style: ButtonStyle(
                     padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                        WidgetStateProperty.all(const EdgeInsets.all(20.0)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Salvar"),
                       SizedBox(
                         width: 5,

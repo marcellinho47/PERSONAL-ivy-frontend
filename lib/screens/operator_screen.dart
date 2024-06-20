@@ -213,12 +213,11 @@ class _OperatorState extends State<Operator> {
                     _addOperator();
                   },
                   style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(20)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Adicionar"),
                       SizedBox(
                         width: 5,
@@ -238,12 +237,11 @@ class _OperatorState extends State<Operator> {
                     _editOperator();
                   },
                   style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(20)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Editar"),
                       SizedBox(
                         width: 5,
@@ -263,12 +261,11 @@ class _OperatorState extends State<Operator> {
                     _deleteOperator();
                   },
                   style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20)),
+                    padding: WidgetStateProperty.all(const EdgeInsets.all(20)),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: const [
+                    children: [
                       Text("Excluir"),
                       SizedBox(
                         width: 5,
